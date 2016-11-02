@@ -7,6 +7,7 @@ You will need [Python 3](https://www.python.org/about/gettingstarted/#installing
 pip install Flask
 pip install flask_socketio
 
+# run it
 export FLASK_APP=index.py
 flask run
 ```
