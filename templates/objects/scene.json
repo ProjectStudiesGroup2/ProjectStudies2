@@ -1,0 +1,82 @@
+{
+	"metadata": {
+		"version": 4.4,
+		"type": "Object",
+		"generator": "Object3D.toJSON"
+	},
+	"geometries": [
+		{
+			"uuid": "BC207D78-2529-4A22-A2A4-5962FF5E80AC",
+			"type": "PlaneBufferGeometry",
+			"width": 2,
+			"height": 2
+		}],
+	"materials": [
+		{
+			"uuid": "3336EF01-DD5F-49F4-905D-EAA82959D8E0",
+			"type": "MeshStandardMaterial",
+			"color": 16777215,
+			"roughness": 0.5,
+			"metalness": 0.5,
+			"emissive": 0,
+			"depthFunc": 3,
+			"depthTest": true,
+			"depthWrite": true,
+			"skinning": false,
+			"morphTargets": false
+		}],
+	"object": {
+		"uuid": "6DCE24B5-E3E0-438A-8A9E-CB2A99915B92",
+		"type": "Scene",
+		"name": "Scene",
+		"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],
+		"children": [
+			{
+				"uuid": "67E9F416-CB7E-4FF0-84B3-5B1EAFF79FDB",
+				"type": "Mesh",
+				"name": "Plane 1",
+				"matrix": [0.7236862778663635,0.5193070769309998,-0.4086543619632721,0,5.4400929265423855e-17,0.6060402393341064,0.770139753818512,0,0.6608163714408875,-0.5687138438224792,0.44753363728523254,0,0,1.0979129076004028,0,1],
+				"geometry": "BC207D78-2529-4A22-A2A4-5962FF5E80AC",
+				"material": "3336EF01-DD5F-49F4-905D-EAA82959D8E0"
+			},
+			{
+				"uuid": "9049A2A9-50EC-4365-BC63-AAE48B33924B",
+				"type": "PerspectiveCamera",
+				"name": "PerspectiveCamera 1",
+				"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,0,1.7200902700424194,14.195469856262207,1],
+				"fov": 50,
+				"zoom": 1,
+				"near": 1,
+				"far": 10000,
+				"focus": 10,
+				"aspect": 1,
+				"filmGauge": 35,
+				"filmOffset": 0
+			},
+			{
+				"uuid": "38066FDE-CCB8-4776-B989-FDBD0E94F11C",
+				"type": "PointLight",
+				"name": "PointLight 1",
+				"matrix": [1,0,0,0,0,1,0,0,0,0,1,0,3.575770139694214,-0.11555681377649307,8.481332778930664,1],
+				"color": 16777215,
+				"intensity": 1.64,
+				"distance": 2.16,
+				"decay": 1,
+				"shadow": {
+					"camera": {
+						"uuid": "BC4091B7-6F43-4F6C-8470-2F8D1F137223",
+						"type": "PerspectiveCamera",
+						"fov": 90,
+						"zoom": 1,
+						"near": 0.5,
+						"far": 500,
+						"focus": 10,
+						"aspect": 1,
+						"filmGauge": 35,
+						"filmOffset": 0
+					}
+				}
+			}],
+		"background": 11184810
+	}
+}
