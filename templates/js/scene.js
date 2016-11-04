@@ -44,28 +44,30 @@ camera.position.z = 30;
 
 camera.lookAt(scene.position);
 
-document.addEventListener('keydown', keypress, false);
-function keypress(){
-    var speed = 0.1;
-
-    if(event.keyCode == 37){
-        cube.position.x += speed
-    }else if(event.keyCode == 39){
-        cube.position.x -= speed;
-    }else if(event.keyCode == 40){
-        cube.postion.z +=speed;
-    }else if(event.keyCode == 38){
-        cube.postion.z -=speed;
-    }
-}
 
 var render = function() {
 
-    // requestAnimationFrame(render);
-    // renderer.setClearColor(666666);
+    requestAnimationFrame(render);
+    renderer.setClearColor(666666);
 
     // cube.rotation.x += 0.025;
     // cube.rotation.y += 0.05;
+
+    document.addEventListener('keydown', function(event){
+    var speed = 0.01;
+
+    if(event.keyCode == 37){
+        cube.position.x -= speed
+    }else if(event.keyCode == 39){
+        cube.position.x += speed;
+    }else if(event.keyCode == 40){
+        cube.position.z +=speed;
+    }else if(event.keyCode == 38){
+        cube.position.z -=speed;
+    }
+
+    console.log(cube.position);
+}, false);
 
     renderer.render(scene, camera);
 }
