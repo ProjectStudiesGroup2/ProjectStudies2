@@ -48,7 +48,6 @@ camera.lookAt(scene.position);
 var render = function() {
 
     requestAnimationFrame(render);
-    renderer.setClearColor(666666);
 
     // cube.rotation.x += 0.025;
     // cube.rotation.y += 0.05;
