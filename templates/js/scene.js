@@ -19,24 +19,34 @@ var color = new THREE.Color("rgb(255,0,0)");
 grid.setColors(color, 0x000000);
 scene.add (grid);
 
-var cubeGeometry = new THREE.BoxGeometry(5, 5, 5);
-var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
-var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+// var cubeGeometry = new THREE.BoxGeometry(5, 5, 5);
+// var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
+// var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 var planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
 var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
 var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+// 
+var image;
+var geometry  = new THREE.SphereGeometry(1, 32, 32);
+var material  = new THREE.MeshPhongMaterial();
+var sphere    = new THREE.Mesh(geometry, material);
+
+material.map  = THREE.ImageUtils.loadTexture('ball.png');
+material.bumpScale = 0.05;
+
 
 plane.rotation.x = -.5*Math.PI;
 plane.receiveShadow = true;
 
 scene.add(plane);
 
-cube.position.x = 2.5;
-cube.position.y = 2.5;
-cube.position.z = 2.5;
-cube.castShadow = true;
+sphere .position.x = 2.5;
+sphere .position.y = 2.5;
+sphere .position.z = 2.5;
+sphere .castShadow = true;
 
-scene.add(cube);
+scene.add(sphere );
 
 camera.position.x = 30;
 camera.position.y = 30;
@@ -49,28 +59,26 @@ var render = function() {
 
     requestAnimationFrame(render);
 
-    // cube.rotation.x += 0.025;
-    // cube.rotation.y += 0.05;
-
     document.addEventListener('keydown', function(event){
     var speed = 0.01;
 
     if(event.keyCode == 37){
-        cube.position.x -= speed
+        sphere.position.x -= speed
     }else if(event.keyCode == 39){
-        cube.position.x += speed;
+        sphere.position.x += speed;
     }else if(event.keyCode == 40){
-        cube.position.z +=speed;
+        sphere.position.z +=speed;
     }else if(event.keyCode == 38){
-        cube.position.z -=speed;
+        sphere.position.z -=speed;
     }
 
-    console.log(cube.position);
+    console.log(sphere.position);
 }, false);
 
     renderer.render(scene, camera);
 }
 render();
+
 
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<
 // animated scene
