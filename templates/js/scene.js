@@ -19,21 +19,29 @@ var color = new THREE.Color("rgb(255,0,0)");
 grid.setColors(color, 0x000000);
 scene.add (grid);
 
-// var cubeGeometry = new THREE.BoxGeometry(5, 5, 5);
-// var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
-// var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+var loader = new THREE.TGALoader();
+
+//moving of a camera
+var SCREEN_WIDTH = window.innerWidth;
+var SCREEN_HEIGHT = window.innerHeight;
+var mouseX = 0, mouseY = 0;
+var windowHalfX = window.innerWidth / 2;
+var windowHalfY = window.innerHeight / 6;
+
 var planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
 var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
 var plane = new THREE.Mesh(planeGeometry, planeMaterial);
 
-// 
-var image;
-var geometry  = new THREE.SphereGeometry(1, 32, 32);
-var material  = new THREE.MeshPhongMaterial();
+THREE.ImageUtils.crossOrigin = '';
+
+// ball creation and texturing
+var texture = loader.load( 'ball.tga' );
+var geometry  = new THREE.SphereGeometry(3, 32, 32);
+var material  = new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('ball1.jpg') } );
 var sphere    = new THREE.Mesh(geometry, material);
 
-material.map  = THREE.ImageUtils.loadTexture('ball.png');
-material.bumpScale = 0.05;
+//material.map  = THREE.ImageUtils.loadTexture('ball.png');
+//material.bumpScale = 0.05;
 
 
 plane.rotation.x = -.5*Math.PI;
@@ -41,42 +49,56 @@ plane.receiveShadow = true;
 
 scene.add(plane);
 
-sphere .position.x = 2.5;
-sphere .position.y = 2.5;
-sphere .position.z = 2.5;
-sphere .castShadow = true;
+sphere.position.x = 0;
+sphere.position.y = 3;
+sphere.position.z = 0;
+sphere.castShadow = true;
 
 scene.add(sphere );
 
+camera = new THREE.PerspectiveCamera( 35, SCREEN_WIDTH / SCREEN_HEIGHT, 10, 2000 );
 camera.position.x = 30;
 camera.position.y = 30;
-camera.position.z = 30;
+camera.position.z = 100;
 
 camera.lookAt(scene.position);
+
+function onDocumentMouseMove( event ) {
+	mouseX = ( event.clientX - windowHalfX );
+	mouseY = ( event.clientY - windowHalfY );
+}
 
 
 var render = function() {
 
     requestAnimationFrame(render);
 
+    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
     document.addEventListener('keydown', function(event){
     var speed = 0.01;
 
-    if(event.keyCode == 37){
-        sphere.position.x -= speed
-    }else if(event.keyCode == 39){
-        sphere.position.x += speed;
-    }else if(event.keyCode == 40){
-        sphere.position.z +=speed;
-    }else if(event.keyCode == 38){
-        sphere.position.z -=speed;
-    }
+        if(event.keyCode == 37){
+            sphere.position.x -= speed
+        }else if(event.keyCode == 39){
+            sphere.position.x += speed;
+        }else if(event.keyCode == 40){
+            sphere.position.z +=speed;
+        }else if(event.keyCode == 38){
+            sphere.position.z -=speed;
+        }
 
     console.log(sphere.position);
-}, false);
+    }, false);
 
-    renderer.render(scene, camera);
+    camera.position.x += ( mouseX - camera.position.x ) * .05;
+	camera.position.y = THREE.Math.clamp( camera.position.y + ( - ( mouseY - 200 ) - camera.position.y ) * .05, 50, 1000 );
+	camera.lookAt( scene.position );
+
+    renderer.render(scene, camera);        
 }
+
+
 render();
 
 
