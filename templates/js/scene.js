@@ -1,4 +1,7 @@
-var scene = new THREE.Scene();
+Physijs.scripts.worker = '/js/physijs_worker.js';
+Physijs.scripts.ammo = '/js/ammo.js';
+
+var scene = new Physijs.Scene();
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
 var spotLight = new THREE.SpotLight(0xffffff);
 spotLight.castShadow = true;
@@ -13,26 +16,33 @@ renderer.shadowMapSoft = true;
 document.body.appendChild(renderer.domElement);
 
 var axis = new THREE.AxisHelper(10);
-scene.add (axis);
+scene.add(axis);
 var grid = new THREE.GridHelper(50, 5);
 var color = new THREE.Color("rgb(255,0,0)");
 grid.setColors(color, 0x000000);
-scene.add (grid);
+scene.add(grid);
 
-var cubeGeometry = new THREE.BoxGeometry(5, 5, 5);
-var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
-var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-var planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
-var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
-var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+var cube = new Physijs.BoxMesh(
+    new THREE.BoxGeometry(5, 5, 5),
+    new THREE.MeshLambertMaterial({
+        color: 0x7a0c0c
+    })
+);
 
-plane.rotation.x = -.5*Math.PI;
+var plane = new Physijs.PlaneMesh(
+    new THREE.PlaneGeometry(100, 100, 100),
+    new THREE.MeshLambertMaterial({
+        color: 0xffffff
+    })
+);
+
+plane.rotation.x = -.5 * Math.PI;
 plane.receiveShadow = true;
 
 scene.add(plane);
 
 cube.position.x = 2.5;
-cube.position.y = 2.5;
+cube.position.y = 3.5;
 cube.position.z = 2.5;
 cube.castShadow = true;
 
@@ -52,22 +62,23 @@ var render = function() {
     // cube.rotation.x += 0.025;
     // cube.rotation.y += 0.05;
 
-    document.addEventListener('keydown', function(event){
-    var speed = 0.01;
+    document.addEventListener('keydown', function(event) {
+        var speed = 0.01;
 
-    if(event.keyCode == 37){
-        cube.position.x -= speed
-    }else if(event.keyCode == 39){
-        cube.position.x += speed;
-    }else if(event.keyCode == 40){
-        cube.position.z +=speed;
-    }else if(event.keyCode == 38){
-        cube.position.z -=speed;
-    }
+        if (event.keyCode == 37) {
+            cube.position.x -= speed
+        } else if (event.keyCode == 39) {
+            cube.position.x += speed;
+        } else if (event.keyCode == 40) {
+            cube.position.z += speed;
+        } else if (event.keyCode == 38) {
+            cube.position.z -= speed;
+        }
 
-    console.log(cube.position);
-}, false);
+        console.log(cube.position);
+    }, false);
 
+    scene.simulate();
     renderer.render(scene, camera);
 }
 render();
@@ -77,7 +88,7 @@ render();
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // var scene = new THREE.Scene();
-// var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000); 
+// var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
 //                                                     //aspect ratio; width/height is a good default setup; near clipping frame; far clipping frame
 // var light = new THREE.PointLight(0xFFFFFF);
 
@@ -89,7 +100,7 @@ render();
 // var renderer = new THREE.WebGLRenderer();
 //     renderer.setSize(window.innerWidth, window.innerHeight);
 //     document.body.appendChild(renderer.domElement);
-            
+
 //     scene.add(cube);
 //     scene.add(plane);
 //     scene.add(light);
