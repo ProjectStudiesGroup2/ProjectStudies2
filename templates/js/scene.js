@@ -1,5 +1,5 @@
-Physijs.scripts.worker = './js/physijs_worker.js';
-Physijs.scripts.ammo = './ammo.js';
+Physijs.scripts.worker = '/js/physijs_worker.js';
+Physijs.scripts.ammo = '/js/ammo.js';
 
 var scene = new Physijs.Scene();
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
@@ -68,8 +68,8 @@ var render = function() {
     // ball.rotation.x += 0.025;
     // ball.rotation.y += 0.05;
 
-    document.addEventListener('keydown', function(event){
-    var speed = 0.01;
+    document.addEventListener('keydown', function(event) {
+        var speed = 0.01;
 
     if(event.keyCode == 37){
         ball.position.x -= speed
@@ -88,6 +88,7 @@ var render = function() {
     console.log(ball.position);
 }, false);
 
+    scene.simulate();
     renderer.render(scene, camera);
 }
 render();
@@ -97,7 +98,7 @@ render();
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 // var scene = new THREE.Scene();
-// var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000); 
+// var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
 //                                                     //aspect ratio; width/height is a good default setup; near clipping frame; far clipping frame
 // var light = new THREE.PointLight(0xFFFFFF);
 
@@ -109,7 +110,7 @@ render();
 // var renderer = new THREE.WebGLRenderer();
 //     renderer.setSize(window.innerWidth, window.innerHeight);
 //     document.body.appendChild(renderer.domElement);
-            
+
 //     scene.add(cube);
 //     scene.add(plane);
 //     scene.add(light);
