@@ -161,6 +161,7 @@ var render = function() {
         goalie.position.x < -10 && goalieLV.x < -1) {
         goalie.setLinearVelocity(
             goalieLV.add({ x: -goalieLV.x, y: 0, z: 0 })
+        );
     }
     // Goalie <-
 
