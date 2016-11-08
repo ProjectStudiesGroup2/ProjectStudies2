@@ -1,5 +1,5 @@
-Physijs.scripts.worker = '/js/physijs_worker.js';
-Physijs.scripts.ammo = '/js/ammo.js';
+Physijs.scripts.worker = './js/physijs_worker.js';
+Physijs.scripts.ammo = 'ammo.js';
 
 var scene = new Physijs.Scene();
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
@@ -19,6 +19,7 @@ controls.maxPolarAngle = Math.PI * 0.5;
 controls.minDistance = 40;
 controls.maxDistance = 50;
 
+//VV for visual help *can be commented out* VV
 var axis = new THREE.AxisHelper(100);
 axis.position.set(0, .25, 0);
 scene.add (axis);
@@ -26,13 +27,14 @@ var grid = new THREE.GridHelper(50, 5);
 var color = new THREE.Color("rgb(160,160,160)");
 grid.setColors(color, 0x000000);
 scene.add (grid);
+//^^ end ^^
 
 var poleGeometry = new THREE.CylinderGeometry(.5, .5, 20, 32);
 var poleMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
 var pole = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
 var pole2 = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
 var pole3 = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
-var ballGeometry = new THREE.SphereGeometry(2, 12, 12);
+var ballGeometry = new THREE.SphereGeometry(1, 12, 12);
 var ballMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
 var ball = new Physijs.SphereMesh(ballGeometry, ballMaterial, 1);
 var planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
@@ -61,13 +63,9 @@ camera.lookAt(scene.position);
 spotLight.target = plane;
 
 var render = function() {
-
     scene.simulate();
     requestAnimationFrame(render);
-
-    // ball.rotation.x += 0.025;
-    // ball.rotation.y += 0.05;
-
+// VV can be replaced with better movement VV
     document.addEventListener('keydown', function(event) {
         var speed = 0.01;
 
@@ -84,96 +82,11 @@ var render = function() {
         ball.position.z -=speed;
         ball.__dirtyPosition = true;
     }
-
     console.log(ball.position);
 }, false);
+// ^^ end ^^
 
     scene.simulate();
     renderer.render(scene, camera);
 }
 render();
-
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<
-// animated scene
-// <<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-// var scene = new THREE.Scene();
-// var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
-//                                                     //aspect ratio; width/height is a good default setup; near clipping frame; far clipping frame
-// var light = new THREE.PointLight(0xFFFFFF);
-
-// var geometry = new THREE.BoxGeometry(3, 1, 1);
-// var material = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
-// var cube = new THREE.Mesh(geometry, material);
-// var plane = new THREE.Mesh(geometry, material);
-// // var controls;
-// var renderer = new THREE.WebGLRenderer();
-//     renderer.setSize(window.innerWidth, window.innerHeight);
-//     document.body.appendChild(renderer.domElement);
-
-//     scene.add(cube);
-//     scene.add(plane);
-//     scene.add(light);
-
-//     camera.position.z = 50;
-
-//     plane.position.z = -3;
-
-//     light.position.x = 10;
-//     light.position.y = 50;
-//     light.position.z = 90;
-
-//     // controls = new THREE.OrbitControls(camera, renderer.domElement);
-//     // controls.enableDamping = true;
-//     // controls.dampingFactor = 0.25;
-//     // controls.enableZoom = false;
-
-// var render = function() {
-//     requestAnimationFrame(render);
-//     renderer.setClearColor(666666);
-
-//     // controls.update();
-
-//     cube.rotation.x += 0.025;
-//     cube.rotation.y += 0.05;
-
-//     renderer.render(scene, camera);
-// }
-//     render();
-
-// <<<<<<<<<<<<<<<<<<<<<<<
-// attemp the improting scene and assets
-// <<<<<<<<<<<<<<<<<<<<<<<
-
-// var camera, scene;
-
-// camera = loadScene.camera;
-// scene = loadScene.scene;
-
-// var renderer = new THREE.WebGLRenderer();
-// renderer.setSize(window.innerWidth, window.innerHeight);
-// document.body.appendChild(renderer.domElement);
-
-// function createLoadScene(){
-//     var result = {
-//         scene: new THREE.Scene(),
-//         camera: new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000)
-
-//     };
-//     result.camera.position.z = 100;
-//     result.scene.add(result.camera);
-
-//     var geometry, material, light
-
-//     material = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
-//     geometry = new THREE.BoxGeometry(3, 1, 1);
-
-//     light = new THREE.DirectionalLight( 0xffffff);
-//     result.scene.add(light);
-
-//     return result;
-// }
-// function render(){
-//     renderer.render(scene, camera);
-// }
-// render();
