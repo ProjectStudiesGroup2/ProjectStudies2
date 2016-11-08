@@ -125,7 +125,7 @@ var render = function() {
         // }
     keyboard.update();
 
-	var moveDistance = 5 * clock.getDelta(); 
+	var moveDistance = 10 * clock.getDelta(); 
 
 	if ( keyboard.pressed("W") )
 		sphere.translateX( -moveDistance );
