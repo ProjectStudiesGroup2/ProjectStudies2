@@ -102,10 +102,10 @@ scene.add(crossbar);
 
     /*** Trigger ***/
 var trigger = new THREE.Mesh(
-    new THREE.CubeGeometry(18, 20, 0.1),
-    new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true })
+    new THREE.CubeGeometry(18, 20, 0.2), 
+    new THREE.MeshBasicMaterial({ wireframe: true, visible: false }) 
 );
-trigger.position.set(0, 1, -40);
+trigger.position.set(0, 1, -40.2);
 scene.add(trigger);
 
 var collidableMeshList = [];
@@ -142,7 +142,7 @@ document.addEventListener('keydown', function(event) {
     if (!ballMoving) {
         switch (event.key) {
 
-            case "w":
+            case " ":
                 ball.setLinearVelocity(
                     ballLV.add({ z: -ballSpeed, x: 0, y: 0 })
                 );
@@ -156,7 +156,7 @@ document.addEventListener('keyup', function(event) {
         var ballLV = ball.getLinearVelocity()
 
         switch (event.key) {
-            case "w":
+            case " ":
                 ball.setLinearVelocity(ballLV.add({ z: -ballLV.x, x: 0, y: 0 }));
                 ballMoving = false;
                 break;
