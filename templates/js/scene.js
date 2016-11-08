@@ -71,7 +71,7 @@ spotLight.shadow.camera.near = 1;
 
     /*** Field ***/
 var plane = new Physijs.BoxMesh(
-    new THREE.PlaneGeometry(100, 100, 100),
+    new THREE.PlaneGeometry(100, 100),
     new THREE.MeshLambertMaterial({ color: 0xffffff }),
     0
 );
@@ -84,7 +84,7 @@ spotLight.target = plane;
 
 
     /*** Goal ***/
-var postGeometry = new THREE.CylinderGeometry(.5, .5, 20, 32);
+var postGeometry = new THREE.CylinderGeometry(.5, .5, 20);
 var postMaterial = new THREE.MeshLambertMaterial({ color: 0x7a0c0c });
 var post1 = new Physijs.CylinderMesh(postGeometry, postMaterial, 0);
 var post2 = new Physijs.CylinderMesh(postGeometry, postMaterial, 0);
@@ -102,7 +102,7 @@ scene.add(crossbar);
 
     /*** Trigger ***/
 var trigger = new THREE.Mesh(
-    new THREE.CubeGeometry(18, 20, 0.1, 1, 1, 1),
+    new THREE.CubeGeometry(18, 20, 0.1),
     new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true })
 );
 trigger.position.set(0, 1, -40);
@@ -242,7 +242,7 @@ scene.add(axis);
 
 
     /*** Grid ***/
-var grid = new THREE.GridHelper(50, 10, 0x9f9f9f, 0x000000);
+var grid = new THREE.GridHelper(50, 10);
 scene.add(grid);
 
 
