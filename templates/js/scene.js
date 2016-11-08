@@ -5,7 +5,10 @@ Physijs.scripts.ammo = 'ammo.js';
 // Physijs.scripts.ammo = '/js/ammo.js';
 
 var scene = new Physijs.Scene();
+// cam for the kicker
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
+// cam for the goalee
+var camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
 var spotLight = new THREE.SpotLight(0xffffff, 3);
 spotLight.castShadow = true;
 spotLight.position.set(15, 50, 30);
@@ -17,10 +20,18 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMapEnabled = true;
 renderer.shadowMapSoft = true;
 document.body.appendChild(renderer.domElement);
+// orbit controls for the kicker cam
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.maxPolarAngle = Math.PI * 0.5;
-controls.minDistance = 40;
-controls.maxDistance = 50;
+controls.target.set(0, 0, 0); // for orbit cam point
+controls.minDistance = 30;
+controls.maxDistance = 100;
+//  orbit controls for the goalee cam
+var controls2 = new THREE.OrbitControls(camera2, renderer.domElement);
+controls2.maxPolarAngle = Math.PI * 0.5;
+controls2.target.set(0, 10, -30); // for orbit cam point
+controls2.minDistance = 30;
+controls2.maxDistance = 60;
 
 //VV for visual help *can be commented out* VV
 var axis = new THREE.AxisHelper(100);
@@ -42,7 +53,7 @@ var ballMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
 var ball = new Physijs.SphereMesh(ballGeometry, ballMaterial, 1);
 var planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
 var planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
-var plane = new Physijs.PlaneMesh(planeGeometry, planeMaterial, 0);
+var plane = new Physijs.BoxMesh(planeGeometry, planeMaterial, 0);
 
 plane.rotation.x = -.5*Math.PI;
 plane.receiveShadow = true;
@@ -60,8 +71,10 @@ pole3.position.set(0, 10, -40);
 pole3.rotation.z = -.5*Math.PI;
 scene.add(pole3);
 
-camera.position.set( 30, 30, 30);
-camera.lookAt(scene.position);
+camera.position.set(30, 30, 30);
+camera.lookAt(new THREE.Vector3(0, 0, 0)); // for starting cam point
+camera2.position.set(0, 25, -70);
+camera2.lookAt(new THREE.Vector3(0, 10, -30)) // for starting cam point
 
 spotLight.target = plane;
 
@@ -90,6 +103,9 @@ var render = function() {
 // ^^ end ^^
 
     scene.simulate();
+    // render from kicker cam *comment out for kicker persp*
     renderer.render(scene, camera);
+    // // render from goalee cam *comment out for goalee persp*
+    // renderer.render(scene, camera2);
 }
 render();
