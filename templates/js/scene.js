@@ -34,7 +34,6 @@ scene.add (grid);
 var keyboard = new KeyboardState();
 var clock = new THREE.Clock();
 
-var loader = new THREE.TGALoader();
 
 // FLOOR
 var img = new Image();
