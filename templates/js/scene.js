@@ -1,5 +1,8 @@
 Physijs.scripts.worker = './js/physijs_worker.js';
 Physijs.scripts.ammo = 'ammo.js';
+// // uncomment for use with flask
+// Physijs.scripts.worker = '/js/physijs_worker.js';
+// Physijs.scripts.ammo = '/js/ammo.js';
 
 var scene = new Physijs.Scene();
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
@@ -34,7 +37,7 @@ var poleMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
 var pole = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
 var pole2 = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
 var pole3 = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
-var ballGeometry = new THREE.SphereGeometry(1, 12, 12);
+var ballGeometry = new THREE.SphereGeometry(1.5, 12, 12);
 var ballMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
 var ball = new Physijs.SphereMesh(ballGeometry, ballMaterial, 1);
 var planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
