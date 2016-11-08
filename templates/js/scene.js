@@ -133,38 +133,38 @@ scene.add(ball);
 
 
     /*** Controls ***/
-var clock = new THREE.Clock();
-var keyboard = new KeyboardState();
-
+var ballMoving = false;
 document.addEventListener('keydown', function(event) {
-    keyboard.update();
+    ballBlocked = false;
+    ballSpeed = 40;
+    var ballLV = ball.getLinearVelocity()
 
-    var moveDistance = 10 * clock.getDelta();
+    if (!ballMoving) {
+        switch (event.key) {
 
-    if (keyboard.pressed("A")) {
-        ball.translateX(-moveDistance);
-        ball.__dirtyPosition = true;
+            case "w":
+                ball.setLinearVelocity(
+                    ballLV.add({ z: -ballSpeed, x: 0, y: 0 })
+                );
+                ballMoving = true;
+                break;
+        }
     }
-
-    if (keyboard.pressed("D")) {
-        ball.translateX(moveDistance);
-        ball.__dirtyPosition = true;
-    }
-
-    if (keyboard.pressed("W")) {
-        ball.translateZ(-moveDistance);
-        ball.__dirtyPosition = true;
-    }
-
-    if (keyboard.pressed("S")) {
-        ball.translateZ(moveDistance);
-        ball.__dirtyPosition = true;
-    }
-
-    controls.update();
-    stats.update();
-
 }, false);
+document.addEventListener('keyup', function(event) {
+    if (ballMoving) {
+        var ballLV = ball.getLinearVelocity()
+
+        switch (event.key) {
+            case "w":
+                ball.setLinearVelocity(ballLV.add({ z: -ballLV.x, x: 0, y: 0 }));
+                ballMoving = false;
+                break;
+        }
+    }
+}, false);
+
+var ballBlocked = false;
 
 
 
