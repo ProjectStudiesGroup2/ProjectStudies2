@@ -13,7 +13,7 @@ var scene = new Physijs.Scene();
     /*** Renderer ***/
 var renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(0xdddddd);
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(window.innerWidth, window.innerHeight - 23);
 renderer.shadowMap.enabled = true;
 renderer.shadowMapSoft = true;
 document.body.appendChild(renderer.domElement);
@@ -25,7 +25,7 @@ document.body.appendChild(renderer.domElement);
         \**************/
 
     /*** Kicker ***/
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 23), .1, 1000);
 
 camera.position.set(30, 30, 30);
 camera.lookAt(new THREE.Vector3(0, 0, 0)); // for starting cam point
@@ -39,7 +39,7 @@ controls.maxDistance = 100;
 
 
     /*** Goalie ***/
-// var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
+// var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 23), .1, 1000);
 //
 // camera.position.set(0, 25, -70);
 // camera.lookAt(new THREE.Vector3(0, 10, -30)) // for starting cam point
