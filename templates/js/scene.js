@@ -33,21 +33,15 @@ scene.add(grid);
 //^^ end ^^
 
 var poleGeometry = new THREE.CylinderGeometry(.5, .5, 20, 32);
-var poleMaterial = new THREE.MeshLambertMaterial({
-    color: 0x7a0c0c
-});
+var poleMaterial = new THREE.MeshLambertMaterial({ color: 0x7a0c0c });
 var pole = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
 var pole2 = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
 var pole3 = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
 var ballGeometry = new THREE.SphereGeometry(1.5, 12, 12);
-var ballMaterial = new THREE.MeshLambertMaterial({
-    color: 0x7a0c0c
-});
+var ballMaterial = new THREE.MeshLambertMaterial({ color: 0x7a0c0c });
 var ball = new Physijs.SphereMesh(ballGeometry, ballMaterial, 1);
 var planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
-var planeMaterial = new THREE.MeshLambertMaterial({
-    color: 0xffffff
-});
+var planeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
 var plane = new Physijs.PlaneMesh(planeGeometry, planeMaterial, 0);
 
 plane.rotation.x = -.5 * Math.PI;
@@ -83,43 +77,53 @@ scene.add(goalie);
 
 var goalieMoving = false;
 document.addEventListener('keydown', function(event) {
-    var goalieSpeed = 70;
+    goalieBlocked = false;
+    goalieSpeed = 100;
     var goalieLV = goalie.getLinearVelocity()
 
-    if (!goalieMoving) {
+    if (event.key == "i") {
+        goalie.setLinearVelocity(
+            goalieLV.add({ x: -goalieLV.x, y: goalieSpeed / 2, z: 0 })
+        );
+
+    } else if (!goalieMoving) {
         switch (event.key) {
 
             case "j":
-                goalie.setLinearVelocity(goalieLV.add({ x: goalieSpeed, y: 0, z: 0 }));
+                goalie.setLinearVelocity(
+                    goalieLV.add({ x: goalieSpeed, y: 0, z: 0 })
+                );
                 goalieMoving = true;
                 break;
 
             case "l":
-                goalie.setLinearVelocity(goalieLV.add({ x: -goalieSpeed, y: 0, z: 0 }));
+                goalie.setLinearVelocity(
+                    goalieLV.add({ x: -goalieSpeed, y: 0, z: 0 })
+                );
                 goalieMoving = true;
                 break;
         }
     }
-
 }, false);
 document.addEventListener('keyup', function(event) {
-    var goalieLV = goalie.getLinearVelocity()
-
     if (goalieMoving) {
-        switch (event.key) {
+        var goalieLV = goalie.getLinearVelocity()
 
-            case "j":
-            case "l":
-                goalie.setLinearVelocity(goalieLV.add({ x: -goalieLV.x, y: 0, z: 0 }));
+        switch (event.key) {
+            case "j": case "l":
+                goalie.setLinearVelocity(goalieLV.add({
+                    x: -goalieLV.x,
+                    y: 0,
+                    z: 0
+                }));
                 goalieMoving = false;
                 break;
         }
     }
-
 }, false);
 // Goalie <-
 
-
+var goalieBlocked = false;
 var render = function() {
     scene.simulate();
     requestAnimationFrame(render);
@@ -143,6 +147,22 @@ var render = function() {
         // console.log(ball.position);
     }, false);
     // ^^ end ^^
+
+
+    // -> Goalie
+    var goalieLV = goalie.getLinearVelocity()
+    if (goalie.position.y > goalie.geometry.parameters.height && !goalieBlocked) {
+        goalie.setLinearVelocity(
+            goalieLV.add({ x: 0, y: -goalieLV.y * 1.2, z: 0 })
+        );
+        goalieBlocked = true;
+    }
+    if (goalie.position.x > 10 && goalieLV.x > 1 ||
+        goalie.position.x < -10 && goalieLV.x < -1) {
+        goalie.setLinearVelocity(
+            goalieLV.add({ x: -goalieLV.x, y: 0, z: 0 })
+    }
+    // Goalie <-
 
     scene.simulate();
     renderer.render(scene, camera);
