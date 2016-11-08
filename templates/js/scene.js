@@ -21,6 +21,13 @@ var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.maxPolarAngle = Math.PI * 0.5;
 controls.minDistance = 40;
 controls.maxDistance = 50;
+var stats;
+
+// STATS
+stats = new Stats();
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.bottom = '0px';
+stats.domElement.style.zIndex = 100;
 
 //VV for visual help *can be commented out* VV
 var axis = new THREE.AxisHelper(100);
@@ -32,13 +39,16 @@ grid.setColors(color, 0x000000);
 scene.add(grid);
 //^^ end ^^
 
+var keyboard = new KeyboardState();
+var clock = new THREE.Clock();
+
 var poleGeometry = new THREE.CylinderGeometry(.5, .5, 20, 32);
 var poleMaterial = new THREE.MeshLambertMaterial({ color: 0x7a0c0c });
 var pole = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
 var pole2 = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
 var pole3 = new Physijs.CylinderMesh(poleGeometry, poleMaterial, 0);
-var ballGeometry = new THREE.SphereGeometry(1.5, 12, 12);
-var ballMaterial = new THREE.MeshLambertMaterial({ color: 0x7a0c0c });
+var ballGeometry = new THREE.SphereGeometry(2, 12, 12);
+var ballMaterial = new THREE.MeshLambertMaterial({color: 0x7a0c0c});
 var ball = new Physijs.SphereMesh(ballGeometry, ballMaterial, 1);
 var planeGeometry = new THREE.PlaneGeometry(100, 100, 100);
 var planeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
@@ -48,23 +58,35 @@ plane.rotation.x = -.5 * Math.PI;
 plane.receiveShadow = true;
 scene.add(plane);
 
-ball.position.set(2.5, 5.5, 2.5);
+var wallGeometry = new THREE.CubeGeometry( 18, 20, 0.1, 1, 1, 1 );
+var wallMaterial = new THREE.MeshBasicMaterial( {color: 0x000000, wireframe:true} );
+var wireMaterial = new THREE.MeshBasicMaterial( { color: 0x000000, wireframe:true } );
+	
+var collidableMeshList = [];
+var wall = new THREE.Mesh(wallGeometry, wallMaterial);
+wall.position.set(0, 1, -40);
+scene.add(wall);
+collidableMeshList.push(wall);
+var wall = new THREE.Mesh(wallGeometry, wireMaterial);
+wall.position.set(0, 1, -40);
+scene.add(wall);
+
+ball.position.set(0, 5.5, 0);
 ball.castShadow = true;
 scene.add(ball);
 
-pole.position.set(-10, 0, -40);
+pole.position.set(-10, 2, -40);
 scene.add(pole);
-pole2.position.set(10, 0, -40);
+pole2.position.set(10, 2, -40);
 scene.add(pole2);
-pole3.position.set(0, 10, -40);
-pole3.rotation.z = -.5 * Math.PI;
+pole3.position.set(0, 12, -40);
+pole3.rotation.z = -.5*Math.PI;
 scene.add(pole3);
 
 camera.position.set(30, 30, 30);
 camera.lookAt(scene.position);
 
 spotLight.target = plane;
-
 
 // -> Goalie
 var goalie = new Physijs.BoxMesh(
@@ -124,29 +146,44 @@ document.addEventListener('keyup', function(event) {
 // Goalie <-
 
 var goalieBlocked = false;
+
+function clearText()
+{   document.getElementById('message').innerHTML = '....';   }
+
+function appendText(txt)
+{   document.getElementById('message').innerHTML += txt;   }
+
+document.addEventListener('keydown', function(event) {
+    keyboard.update();
+
+	var moveDistance = 10 * clock.getDelta(); 
+
+	if ( keyboard.pressed("A") )
+		ball.translateX( -moveDistance);
+        ball.__dirtyPosition = true; 
+		
+	if ( keyboard.pressed("D") )
+		ball.translateX(  moveDistance );
+        ball.__dirtyPosition = true; 
+    
+    if ( keyboard.pressed("W") )
+		ball.translateZ(  -moveDistance );
+        ball.__dirtyPosition = true; 
+    
+    if ( keyboard.pressed("S") )
+		ball.translateZ(  moveDistance );  
+        ball.__dirtyPosition = true; 
+
+    controls.update();
+	stats.update();
+
+}, false);
+
+
 var render = function() {
+    clearText();
     scene.simulate();
     requestAnimationFrame(render);
-    // VV can be replaced with better movement VV
-    document.addEventListener('keydown', function(event) {
-        var speed = 0.01;
-
-        if (event.keyCode == 37) {
-            ball.position.x -= speed
-            ball.__dirtyPosition = true;
-        } else if (event.keyCode == 39) {
-            ball.position.x += speed;
-            ball.__dirtyPosition = true;
-        } else if (event.keyCode == 40) {
-            ball.position.z += speed;
-            ball.__dirtyPosition = true;
-        } else if (event.keyCode == 38) {
-            ball.position.z -= speed;
-            ball.__dirtyPosition = true;
-        }
-        // console.log(ball.position);
-    }, false);
-    // ^^ end ^^
 
 
     // -> Goalie
@@ -164,6 +201,21 @@ var render = function() {
         );
     }
     // Goalie <-
+    
+
+    var originPoint = ball.position.clone();	
+	
+	for (var vertexIndex = 0; vertexIndex < ball.geometry.vertices.length; vertexIndex++)
+	{		
+		var localVertex = ball.geometry.vertices[vertexIndex].clone();
+		var globalVertex = localVertex.applyMatrix4( ball.matrix );
+		var directionVector = globalVertex.sub( ball.position );
+		
+		var ray = new THREE.Raycaster( originPoint, directionVector.clone().normalize() );
+		var collisionResults = ray.intersectObjects( collidableMeshList );
+		if ( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
+			appendText(" GOAL! ");
+	}
 
     scene.simulate();
     renderer.render(scene, camera);
