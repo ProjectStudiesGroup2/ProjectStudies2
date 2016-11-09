@@ -9,7 +9,6 @@ Physijs.scripts.ammo = 'ammo.js';
     /*** Scene ***/
 var scene = new Physijs.Scene();
 
-
     /*** Renderer ***/
 var renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(0xdddddd);
@@ -17,6 +16,16 @@ renderer.setSize(window.innerWidth, window.innerHeight - 23);
 renderer.shadowMap.enabled = true;
 renderer.shadowMapSoft = true;
 document.body.appendChild(renderer.domElement);
+
+    /*** Textures ***/
+var textureLoader = new THREE.TextureLoader();
+var textureGrass = textureLoader.load("img/grass.jpg");
+textureGrass.anisotropy = 4;    //lower value if the view is too laggy
+textureGrass.wrapS = textureGrass.wrapT = THREE.RepeatWrapping;
+textureGrass.repeat.set(10, 10);
+var textureBall = textureLoader.load("img/ball.png");
+textureBall.anisotropy = 3;     //lower value if the view is too laggy
+var textureGoalie = textureLoader.load("img/ball1.jpg");
 
 
 
@@ -83,7 +92,7 @@ scene.add(spotLight2);
     /*** Field ***/
 var plane = new Physijs.BoxMesh(
     new THREE.PlaneGeometry(100, 100),
-    new THREE.MeshLambertMaterial({ color: 0xffffff }),
+    new THREE.MeshLambertMaterial({ color: 0xffffff, map: textureGrass }),
     0
 );
 
@@ -97,7 +106,7 @@ spotLight2.target = plane;
 
     /*** Goal ***/
 var postGeometry = new THREE.CylinderGeometry(.5, .5, 20);
-var postMaterial = new THREE.MeshLambertMaterial({ color: 0x7a0c0c });
+var postMaterial = new THREE.MeshLambertMaterial({ color: 0xbcbaba });
 var post1 = new Physijs.CylinderMesh(postGeometry, postMaterial, 0);
 var post2 = new Physijs.CylinderMesh(postGeometry, postMaterial, 0);
 var crossbar = new Physijs.CylinderMesh(postGeometry, postMaterial, 0);
@@ -137,7 +146,7 @@ stats.domElement.style.zIndex = 100;
     /*** Object ***/
 var ball = new Physijs.SphereMesh(
     new THREE.SphereGeometry(2, 12, 12),
-    new THREE.MeshLambertMaterial({ color: 0x7a0c0c })
+    new THREE.MeshLambertMaterial({ color: 0xffffff, map: textureBall })
 );
 ball.position.set(0, 5.5, 0);
 ball.castShadow = true;
@@ -187,7 +196,7 @@ document.addEventListener('keydown', function(event) {
     /*** Object ***/
 var goalie = new Physijs.BoxMesh(
     new THREE.BoxGeometry(5, 7, 3),
-    new THREE.MeshBasicMaterial({ color: 0x307460 })
+    new THREE.MeshBasicMaterial({ map: textureGoalie })
 );
 goalie.position.set(0, 4, -35);
 goalie.castShadow = true;
