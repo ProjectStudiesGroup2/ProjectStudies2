@@ -2,12 +2,18 @@ from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
+app.players = 1
 socketio = SocketIO(app)
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', player=app.players)
+
+
+@socketio.on('connect')
+def on_connect():
+    app.players += 1
 
 
 @app.route('/<path:path>')
