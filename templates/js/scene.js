@@ -135,25 +135,41 @@ scene.add(ball);
     /*** Controls ***/
 var ballMoving = false;
 
-//Setting timeout to give a various strangth of the kick
-var lastKeyUpAt = 0;
+var lastKeyUpAt = -1;
 var ballSpeed = 0;
 var ballVertAngle = 0;
-var space = " ";        
+var space = " ";  
+
+var scale = true;
 
 document.addEventListener('keydown', function(event) {    
-    var ballLV = ball.getLinearVelocity()
+    var ballLV = ball.getLinearVelocity();
+    $('#scale').width() == 1;     
 
     if (event.key == space) {
-        if (lastKeyUpAt >= 50) {
-            lastKeyUpAt = 0;    
+        setTimeout(function() {
+            if (scale){
+                $( "#scaleAppend" ).empty();
+                $( "#scaleAppend" ).delay(1000).append('<div id="scale" class="box">&nbsp;</div>');
+                scale = false;
+            };
+        }, 100);        
+        lastKeyUpAt ++;          
+        if (lastKeyUpAt >= 20) {
+            lastKeyUpAt = -1;    
             return lastKeyUpAt;
-        }  
+        }    
         ballBlocked = false;
-        var ballLV = ball.getLinearVelocity();    
-        setTimeout(function() {                
-            lastKeyUpAt ++;  
-        });        
+        
+        ballLV = ball.getLinearVelocity();    
+        setTimeout(function() {
+            if ($('#scale').width() == 1){
+                $('#scale').animate({ width: 300 }, 300);
+            }
+            else if ($('#scale').width() == 300){
+                $('#scale').animate({ width: 1   }, 300);       
+            }   
+        });           
     }
     else if (!goalieMoving || event.key == "w") {
         switch (event.key) {            
@@ -166,8 +182,8 @@ document.addEventListener('keydown', function(event) {
         }    
         ballSpeed = 0;
         ballVertAngle = 0;
-    }    
-    console.log( "lastKeyUpAt = " + lastKeyUpAt );
+    }              
+    console.log( "lastKeyUpAt = " + lastKeyUpAt );         
     return ballSpeed, ballVertAngle;
 }, false);
 
@@ -175,51 +191,68 @@ document.addEventListener('keyup', function(event) {
     if (event.key == space) {
         var ballLV = ball.getLinearVelocity()
        
-        if (lastKeyUpAt >= 40) {
-            ballSpeed = 5;          
+        if (lastKeyUpAt >= 20) {
+            ballSpeed = 1;          
         } 
-        else if (lastKeyUpAt >= 35) {
-            ballSpeed = 10;        
+        else if (lastKeyUpAt >= 19) {
+            ballSpeed = 5; 
+            ballVertAngle = 2;          
         } 
-        else if (lastKeyUpAt >= 30) {
-            
-            ballSpeed = 25;  
-            ballVertAngle = 3;        
+        else if (lastKeyUpAt >= 17) {
+            ballSpeed = 10;  
+            ballVertAngle = 3;         
         } 
-        else if (lastKeyUpAt >= 27) {
-
-            ballSpeed = 40; 
-            ballVertAngle = 3;
+        else if (lastKeyUpAt >= 15) {
+            ballSpeed = 20; 
+            ballVertAngle = 4;          
+        } 
+        else if (lastKeyUpAt >= 13) {
+            ballSpeed = 30; 
+            ballVertAngle = 5;        
+        } 
+        else if (lastKeyUpAt >= 11) {            
+            ballSpeed = 50;  
+            ballVertAngle = 5;        
+        } 
+        else if (lastKeyUpAt >= 9) {
+            ballSpeed = 90; 
+            ballVertAngle = 6;
         }   
-        else if (lastKeyUpAt >= 20) {
+        else if (lastKeyUpAt >= 7) {
             ballSpeed = 50; 
-            ballVertAngle = 10;
+            ballVertAngle = 5;
         }   
-        else if (lastKeyUpAt >= 16) {
-            ballSpeed = 40; 
-            ballVertAngle = 7;
-        }   
-        else if (lastKeyUpAt >= 12) {
+        else if (lastKeyUpAt >= 6) {
             ballSpeed = 30; 
             ballVertAngle = 5;
-        }  
+        }   
         else if (lastKeyUpAt >= 5) {
             ballSpeed = 20; 
+            ballVertAngle = 4;
+        }  
+        else if (lastKeyUpAt >= 3) {
+            ballSpeed = 10; 
             ballVertAngle = 3;
         }  
         else if (lastKeyUpAt >= 1) {
-            ballSpeed = 10; 
+            ballSpeed = 5; 
+            ballVertAngle = 2;
         }  
         else if (lastKeyUpAt >= 0) {
-            ballSpeed = 5;             
-        }    
+            ballSpeed = 1;             
+        }  
+        
 
         switch (event.key) {
             case space:
                 lastKeyUpAt = 0; 
                 console.log( "Ball speed = " + ballSpeed + "; VertAngle = " + ballVertAngle );  
-                ballMoving = false;
-        }    
+                $( "#kickStr" ).empty();
+                $( "#kickStr" ).append( ballSpeed );
+                ballMoving = false;   
+                break;             
+        }          
+        $( "#scale" ).stop();
         return ballSpeed, ballVertAngle;
     }
 
@@ -231,9 +264,8 @@ document.addEventListener('keyup', function(event) {
         ballSpeed = 0;
         ballVertAngle = 0;
         ballMoving = true;        
-    }
+    }  
    
-     
 }, false);
 
 var ballBlocked = false;

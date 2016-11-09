@@ -8,6 +8,13 @@
         body { margin: 0; overflow: hidden; }
         canvas { width: 100%; height: 100% }
     </style>
+    <!-- Google fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Coiny|Shrikhand" rel="stylesheet">
+
+    <!-- jQuery script -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!-- Style adding -->
     <link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
 </head>
 
@@ -15,12 +22,13 @@
     <div class="controlls">
         <h3>The penalty game</h3>
         <p> Press the <img src="spacebar.png" class="img"> to choose a stangth of the kick.</p>
-        <p> Press <img src="Wbar.png" class="img2"> to kick the ball.</p>
+        <p> Press <img src="Wbar.png" class="img2"> to kick the ball.</p>        
+        <p> Press A to choose angle </p>
+        <p>Kick strength: <i id="kickStr"></i></p> 
+        <div class="box2">MIN<i style="opacity:0">.........................................................</i>MAX</div>
+        <div id="scaleAppend">.</div>
         <p id="message"></p>
     </div>
-
-    <!-- jQuery script -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
     <!-- Scripts for three.js scene -->
     <script src="js/three.min.js"></script>
