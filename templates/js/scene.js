@@ -171,7 +171,7 @@ document.addEventListener('keydown', function(event) {
             }   
         });           
     }
-    else if (!goalieMoving || event.key == "w") {
+    else if (!ballMoving || event.key == "w") {
         switch (event.key) {            
             case "w":
                 ball.setLinearVelocity(
@@ -242,7 +242,6 @@ document.addEventListener('keyup', function(event) {
             ballSpeed = 1;             
         }  
         
-
         switch (event.key) {
             case space:
                 lastKeyUpAt = 0; 
