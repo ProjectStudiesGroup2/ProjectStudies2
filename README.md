@@ -12,7 +12,6 @@ pip install flask-socketio
 ###### Execution
 ```
 export FLASK_APP=index.py
-# If you are on Windows you need to use set instead of export.
-
 flask run
 ```
+If you are on Windows you need to use *set* instead of *export*.
