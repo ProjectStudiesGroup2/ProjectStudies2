@@ -1,0 +1,30 @@
+.controlls {
+     position: absolute;
+     display: block;
+     background: rgba(0,0,0, 0.2);
+     width: 23%;     
+     padding-left: 12px;
+     padding-right: 10px;
+     line-height: 0.6;
+}
+
+.controlls h3 {
+    text-align: center;
+}
+
+.img {
+    position: relative;
+    display: inline-block;
+    width: 70px;
+    height: 30px;
+    top: 10px;
+    margin-top: -10px;
+}
+.img2 {
+    position: relative;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    top: 7px;
+    margin-top: -10px;
+}

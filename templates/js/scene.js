@@ -323,7 +323,7 @@ scene.add(grid);
         |*   Rendering   *|
         \*****************/
 
-function clearText() { document.getElementById('message').innerHTML = '....'; }
+function clearText() { document.getElementById('message').innerHTML = ''; }
 function appendText(txt) { document.getElementById('message').innerHTML += txt; }
 
 var render = function() {
