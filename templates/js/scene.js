@@ -57,11 +57,22 @@ controls.maxDistance = 100;
         |*   Lights   *|
         \**************/
 
-var spotLight = new THREE.SpotLight(0xffffff, 3);
+var spotLight = new THREE.SpotLight(0xffffff, 1);
 spotLight.castShadow = true;
-spotLight.position.set(15, 50, 30);
-scene.add(spotLight);
+spotLight.position.set(5, 60, 60);
 spotLight.shadow.camera.near = 1;
+spotLight.shadowDarkness = 0.2;
+spotLight.shadowMapWidth = 3048;
+spotLight.shadowMapHeight = 3048;
+scene.add(spotLight);
+var spotLight2 = new THREE.SpotLight(0xffffff, 1);
+spotLight2.castShadow = true;
+spotLight2.position.set(5, 50, -60);
+spotLight2.shadow.camera.near = 1;
+spotLight2.shadowDarkness = 0.2;
+spotLight2.shadowMapWidth = 3048;
+spotLight2.shadowMapHeight = 3048;
+scene.add(spotLight2);
 
 
 
@@ -81,6 +92,7 @@ plane.receiveShadow = true;
 scene.add(plane);
 
 spotLight.target = plane;
+spotLight2.target = plane;
 
 
     /*** Goal ***/
