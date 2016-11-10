@@ -26,6 +26,10 @@ textureGrass.repeat.set(10, 10);
 var textureBall = textureLoader.load("img/ball.png");
 textureBall.anisotropy = 3;     //lower value if the view is too laggy
 var textureGoalie = textureLoader.load("img/goalie.jpg");
+//     //net implementation attempt
+// var textureNet = textureLoader.load('img/circuit_pattern.png');
+// textureNet.wrapS = textureNet.wrapT = THREE.RepeatWrapping;
+// textureNet.anisotropy = 16;
 
 
 
@@ -37,12 +41,12 @@ var textureGoalie = textureLoader.load("img/goalie.jpg");
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 23), .1, 1000);
 
 camera.position.set(0, 25, 70);
-camera.lookAt(new THREE.Vector3(0, 0, 0)); // for starting cam point
+camera.lookAt(new THREE.Vector3(0, 10, 20)); // for starting cam point
 
 // orbit controls for the cam
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.maxPolarAngle = Math.PI * 0.5;
-controls.target.set(0, 10, 0); // for orbit cam point
+controls.target.set(0, 10, 20); // for orbit cam point
 controls.minDistance = 30;
 controls.maxDistance = 100;
 
@@ -73,17 +77,15 @@ var spotLight = new THREE.SpotLight(0xffffff, 0.7);
 spotLight.castShadow = false;
 spotLight.position.set(100, 80, 100);
 spotLight.shadow.camera.near = 1;
-spotLight.shadowDarkness = 0.2;
-spotLight.shadowMapWidth = 3048;
-spotLight.shadowMapHeight = 3048;
+spotLight.shadow.mapSize.width = 3048;
+spotLight.shadow.mapSize.height = 3048;
 scene.add(spotLight);
 var spotLight2 = new THREE.SpotLight(0xffffff, 0.7);
 spotLight2.castShadow = true;
 spotLight2.position.set(0, 80, 50);
 spotLight2.shadow.camera.near = 1;
-spotLight2.shadowDarkness = 0.2;
-spotLight2.shadowMapWidth = 3048;
-spotLight2.shadowMapHeight = 3048;
+spotLight2.shadow.mapSize.width = 3048;
+spotLight2.shadow.mapSize.height = 3048;
 scene.add(spotLight2);
 
         /*************\
@@ -124,6 +126,34 @@ crossbar.castShadow = true;
 scene.add(post1);
 scene.add(post2);
 scene.add(crossbar);
+
+
+//     /*** Net ***/
+// var netMaterial = new THREE.MeshPhongMaterial({
+//     specular: 0x030303,
+//     map: textureNet,
+//     side: THREE.DoubleSide,
+//     alphaTest: 0.5
+// });
+
+// netGeometry = new THREE.ParametricGeometry(clothFunction, cloth.w, cloth.h);
+// netGeometry.dynamic = true;
+
+// var uniforms = {texture: { value: textureNet}};
+// var vertexShader = document.getElementById('vertexShaderDepth').textContent;
+// var fragmentShader = document.getElementById('fragmentShaderDepth').textContent;
+
+// netObj = new THREE.Mesh(netGeometry, netMaterial);
+// netObj.position.set(0, 7, 0);
+// netObj.castShadow = true;
+// scene.add(netObj);
+
+// netObj.customDepthMaterial = new THREE.ShaderMaterial({
+//     uniforms: uniforms,
+//     vertexShader: vertexShader,
+//     fragmentShader: fragmentShader,
+//     side: THREE.DoubleSide
+// });
 
 
     /*** Trigger ***/
@@ -328,6 +358,18 @@ var render = function() {
         goalie.position.x < -10 && goalieLV.x < -1) {
         goalie.setLinearVelocity({ x: 0, y: goalieLV.y, z: 0 });
     }
+
+    //     /*** Net ***/
+    // var p = cloth.particles;
+
+    // for(var i = 0, il = p.length; i < il; i ++){
+    //     netGeometry.vertices[i].copy(p[i].position);
+    // }
+    // netGeometry.computeFaceNormals();
+    // netGeometry.computeVertexNormals();
+
+    // netGeometry.normalsNeedUpdate = true;
+    // netGeometry.verticesNeedUpdate = true;
 
 
     scene.simulate();
