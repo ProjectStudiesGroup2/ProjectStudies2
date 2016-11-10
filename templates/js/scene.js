@@ -26,6 +26,9 @@ textureGrass.repeat.set(10, 10);
 var textureBall = textureLoader.load("img/ball.png");
 textureBall.anisotropy = 3;     //lower value if the view is too laggy
 var textureGoalie = textureLoader.load("img/goalie.jpg");
+var textureWall1 = textureLoader.load("img/wallC.jpg");
+var textureWall2 = textureLoader.load("img/wallM.jpg");
+var textureWall3 = textureLoader.load("img/wallH.jpg");
 
 
 
@@ -49,16 +52,31 @@ controls.maxDistance = 100;
 
     /*** Goalie ***/
 // var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
-//
+
 // camera.position.set(0, 25, -70);
-// camera.lookAt(new THREE.Vector3(0, 10, -30)) // for starting cam point
-//
+// camera.lookAt(new THREE.Vector3(0, 10, 20)) // for starting cam point
+
 // //  orbit controls for the cam
 // var controls = new THREE.OrbitControls(camera, renderer.domElement);
 // controls.maxPolarAngle = Math.PI * 0.5;
 // controls.target.set(0, 10, -30); // for orbit cam point
 // controls.minDistance = 30;
-// controls.maxDistance = 60;
+// controls.maxDistance = 50;
+
+        /******************************\
+        |*   Interface for controls   *|
+        \******************************/
+$('.showCntr').hide();
+
+$('#ok').click(function() {
+    $('.controls').hide();
+    $('.showCntr').show();
+});
+
+$('.showCntr').click(function() {
+    $('.controls').show();
+    $('.showCntr').hide();
+});
 
 
 
@@ -126,6 +144,35 @@ scene.add(post2);
 scene.add(crossbar);
 
 
+    /*** The walls around the field ***/
+var wall1 = new Physijs.BoxMesh(
+    new THREE.CubeGeometry(33, 20, 0.2), 
+    new THREE.MeshLambertMaterial({ map: textureWall1 }),
+    1000000 
+);
+wall1.position.set(0, 10, -49);
+wall1.castShadow = true;
+scene.add(wall1);
+
+var wall2 = new Physijs.BoxMesh(
+    new THREE.CubeGeometry(33, 20, 0.2), 
+    new THREE.MeshLambertMaterial({ map: textureWall2 }),
+    1000000 
+);
+wall2.position.set(33, 10, -49);
+wall2.castShadow = true;
+scene.add(wall2);
+
+var wall3 = new Physijs.BoxMesh(
+    new THREE.CubeGeometry(33, 20, 0.2), 
+    new THREE.MeshLambertMaterial({ map: textureWall3 }),
+    1000000 
+);
+wall3.position.set(-33, 10, -49);
+wall3.castShadow = true;
+scene.add(wall3);
+
+
     /*** Trigger ***/
 var trigger = new THREE.Mesh(
     new THREE.CubeGeometry(18, 20, 0.2), 
@@ -147,6 +194,8 @@ stats.domElement.style.zIndex = 100;
         /************\
         |*   Ball   *|
         \************/
+    /*** To hide the goal message ***/
+var goalT = true;
 
     /*** Object ***/
 var ball = new Physijs.SphereMesh(
@@ -179,7 +228,7 @@ document.addEventListener('keydown', function(event) {
                 $( "#boxAppend" ).empty();
                 $( "#scaleAppend" ).delay(1170).append('<div id="scale" class="box"></div>');
                 $( "#boxAppend" ).delay(1170).append('<div class="box2"></div>');
-                scale = false;
+                scale = false;               
              };
         }, 100);        
         lastKeyUpAt ++;          
@@ -192,12 +241,14 @@ document.addEventListener('keydown', function(event) {
         ballLV = ball.getLinearVelocity();    
         setTimeout(function() {            
             if ($('#scale').height() == 600){
-                $('#scale').animate({ height: 1 }, 280);       
+                $('#scale').animate({ height: 1 }, 300);       
             }   
             else if ($('#scale').height() == 1){
-                $('#scale').animate({ height: 600 }, 280);
+                $('#scale').animate({ height: 600 }, 300);
             }
-        });           
+        });   
+        goalT = false;
+        return goalT;        
     }
     else if (!ballMoving || event.key == "w" || event.key == "ц") {
         switch (event.key) {            
@@ -216,7 +267,7 @@ document.addEventListener('keydown', function(event) {
         ballVertAngle = 0;
     }              
     console.log( "lastKeyUpAt = " + lastKeyUpAt );         
-    return ballSpeed, ballVertAngle;
+    return ballSpeed, ballVertAngle, goalT;
 }, false);
 
 document.addEventListener('keyup', function(event) {
@@ -224,58 +275,62 @@ document.addEventListener('keyup', function(event) {
         var ballLV = ball.getLinearVelocity()
        
         if (lastKeyUpAt >= 20) {
-            ballSpeed = 1;          
+            ballSpeed = 5;          
         } 
         else if (lastKeyUpAt >= 19) {
-            ballSpeed = 5; 
+            ballSpeed = 10; 
             ballVertAngle = 2;          
         } 
         else if (lastKeyUpAt >= 18) {
-            ballSpeed = 10;  
+            ballSpeed = 15;  
             ballVertAngle = 3;         
         } 
         else if (lastKeyUpAt >= 17) {
-            ballSpeed = 20; 
+            ballSpeed = 30; 
             ballVertAngle = 4;          
         } 
-        else if (lastKeyUpAt >= 14) {
-            ballSpeed = 25; 
+        else if (lastKeyUpAt >= 15) {
+            ballSpeed = 40; 
             ballVertAngle = 5;        
         } 
-        else if (lastKeyUpAt >= 13) {
-            ballSpeed = 30; 
+        else if (lastKeyUpAt >= 14) {
+            ballSpeed = 50; 
             ballVertAngle = 5;        
         } 
         else if (lastKeyUpAt >= 12) {            
-            ballSpeed = 50;  
-            ballVertAngle = 5;        
+            ballSpeed = 70;  
+            ballVertAngle = 6;        
         } 
         else if (lastKeyUpAt >= 9) {
             ballSpeed = 90; 
-            ballVertAngle = 6;
+            ballVertAngle = 8;
         }   
         else if (lastKeyUpAt >= 7) {
+            ballSpeed = 70; 
+            ballVertAngle = 6;
+        }   
+        else if (lastKeyUpAt >= 6) {
             ballSpeed = 50; 
             ballVertAngle = 5;
         }   
-        else if (lastKeyUpAt >= 6) {
-            ballSpeed = 30; 
-            ballVertAngle = 5;
-        }   
         else if (lastKeyUpAt >= 5) {
-            ballSpeed = 20; 
+            ballSpeed = 40; 
+            ballVertAngle = 4;
+        }  
+        else if (lastKeyUpAt >= 4) {
+            ballSpeed = 30; 
             ballVertAngle = 4;
         }  
         else if (lastKeyUpAt >= 3) {
-            ballSpeed = 10; 
+            ballSpeed = 15; 
             ballVertAngle = 3;
         }  
         else if (lastKeyUpAt >= 1) {
-            ballSpeed = 5; 
+            ballSpeed = 10; 
             ballVertAngle = 2;
         }  
         else if (lastKeyUpAt >= 0) {
-            ballSpeed = 1;             
+            ballSpeed = 5;             
         }  
         
         switch (event.key) {
@@ -414,30 +469,29 @@ scene.add(arrow);
         /*****************\
         |*   Rendering   *|
         \*****************/
-
-function clearText() { document.getElementById('message').innerHTML = ''; }
-function appendText(txt) { document.getElementById('message').innerHTML += txt; }
+function clearText()
+{   $('#message').empty().delay(4000);  }
 
 var render = function() {
 
-    requestAnimationFrame(render);
-
-
-        /*** Ball ***/
-    clearText();
-
+    requestAnimationFrame(render); 
+    
+        /*** Ball ***/       
     var originPoint = ball.position.clone();
-    for (var vertexIndex = 0; vertexIndex < ball.geometry.vertices.length; vertexIndex++) {
+    if (goalT == true) {        
+        $('#message').empty();
+    }    
+    for (var vertexIndex = 1; vertexIndex < ball.geometry.vertices.length; vertexIndex++) {
         var localVertex = ball.geometry.vertices[vertexIndex].clone();
         var globalVertex = localVertex.applyMatrix4(ball.matrix);
         var directionVector = globalVertex.sub(ball.position);
 
         var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
         var collisionResults = ray.intersectObjects(collidableMeshList);
-        if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length())
-            appendText(" GOAL! ");
+        if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()  ) { 
+            $('#message').hide().fadeIn(200).empty().append('GOAL!');
+        }; 
     }
-
 
         /*** Goalie ***/
     var goalieLV = goalie.getLinearVelocity()
