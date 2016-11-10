@@ -37,12 +37,12 @@ var textureGoalie = textureLoader.load("img/goalie.jpg");
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 23), .1, 1000);
 
 camera.position.set(0, 25, 70);
-camera.lookAt(new THREE.Vector3(0, 0, 0)); // for starting cam point
+camera.lookAt(new THREE.Vector3(0, 10, 20)); // for starting cam point
 
 // orbit controls for the cam
 var controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.maxPolarAngle = Math.PI * 0.5;
-controls.target.set(0, 10, 0); // for orbit cam point
+controls.target.set(0, 10, 20); // for orbit cam point
 controls.minDistance = 30;
 controls.maxDistance = 100;
 
@@ -287,6 +287,16 @@ var grid = new THREE.GridHelper(50, 10);
 scene.add(grid);
 
 
+    /*** Arrow ***/
+var arrow = new THREE.ArrowHelper(
+    new THREE.Vector3( 0.5, 0.5, 0.5 ),
+    new THREE.Vector3( 0, 2, 20 ),
+    15,
+    0xffa000
+);
+scene.add(arrow);
+
+
 
         /*****************\
         |*   Rendering   *|
@@ -328,6 +338,15 @@ var render = function() {
         goalie.position.x < -10 && goalieLV.x < -1) {
         goalie.setLinearVelocity({ x: 0, y: goalieLV.y, z: 0 });
     }
+
+
+    /*** Arrow ***/
+    var dist = camera.position.distanceTo(arrow.position);
+    arrow.setDirection({
+        x: -((camera.position.x - arrow.position.x) / dist),
+        y: -((camera.position.y - arrow.position.y) / dist) + 0.3,
+        z: -((camera.position.z - arrow.position.z) / dist)
+    });
 
 
     scene.simulate();
