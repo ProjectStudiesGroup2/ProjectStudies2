@@ -31,5 +31,10 @@ def handle_goalie(msg):
     emit('goalie', msg, broadcast=True)
 
 
+@socketio.on('arrow')
+def handle_arrow(msg):
+    emit('arrow', msg, broadcast=True)
+
+
 if __name__ == "__main__":
     socketio.run(app)
