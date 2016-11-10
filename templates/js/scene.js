@@ -170,7 +170,7 @@ var scale = true;
 
 document.addEventListener('keydown', function(event) {    
     var ballLV = ball.getLinearVelocity();
-    $('#scale').height() == 600;     
+    $('#scale').height() == 600;  
 
     if (event.key == space) {
         setTimeout(function() {
@@ -202,8 +202,12 @@ document.addEventListener('keydown', function(event) {
     else if (!ballMoving || event.key == "w" || event.key == "ц") {
         switch (event.key) {            
             case "w":
+                var dist = camera.position.distanceTo(arrow.position);
                 ball.setLinearVelocity(
-                    ballLV.add({ z: -ballSpeed, x: 0, y: ballVertAngle })
+                    ballLV.add({ 
+                        x: -((camera.position.x - arrow.position.x) / dist) * ballSpeed,
+                        y: (-((camera.position.y - arrow.position.y) / dist) + 0.35) * ballSpeed,
+                        z: -((camera.position.z - arrow.position.z) / dist) * ballSpeed })
                 );
                 ballMoving = true;
                 break;
