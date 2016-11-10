@@ -175,7 +175,8 @@ document.addEventListener('keydown', function(event) {
     /*** Object ***/
 var goalie = new Physijs.BoxMesh(
     new THREE.BoxGeometry(5, 7, 3),
-    new THREE.MeshBasicMaterial({ color: 0x307460 })
+    new THREE.MeshBasicMaterial({ color: 0x307460 }),
+    1000
 );
 goalie.position.set(0, 4, -35);
 goalie.castShadow = true;
@@ -185,7 +186,6 @@ scene.add(goalie);
     /*** Controls ***/
 var goalieMoving = false;
 document.addEventListener('keydown', function(event) {
-    goalieBlocked = false;
     goalieSpeed = 100;
     var goalieLV = goalie.getLinearVelocity()
 
@@ -193,22 +193,27 @@ document.addEventListener('keydown', function(event) {
         goalie.setLinearVelocity(
             goalieLV.add({ x: -goalieLV.x, y: goalieSpeed / 2, z: 0 })
         );
+        goalieBlocked = false;
 
     } else if (!goalieMoving) {
         switch (event.key) {
 
             case "j":
-                goalie.setLinearVelocity(
-                    goalieLV.add({ x: goalieSpeed, y: 0, z: 0 })
-                );
-                goalieMoving = true;
+                if (goalie.position.x < 10) {
+                    goalie.setLinearVelocity(
+                        goalieLV.add({ x: goalieSpeed, y: 0, z: 0 })
+                    );
+                    goalieMoving = true;
+                }
                 break;
 
             case "l":
+            if (goalie.position.x > -10) {
                 goalie.setLinearVelocity(
                     goalieLV.add({ x: -goalieSpeed, y: 0, z: 0 })
                 );
                 goalieMoving = true;
+            }
                 break;
         }
     }
@@ -277,7 +282,7 @@ var render = function() {
 
         /*** Goalie ***/
     var goalieLV = goalie.getLinearVelocity()
-    if (goalie.position.y > goalHeight && !goalieBlocked) {
+    if (goalie.position.y > goalHeight - 2 && !goalieBlocked) {
         goalie.setLinearVelocity(
             goalieLV.add({ x: 0, y: -goalieLV.y * 1.2, z: 0 })
         );
@@ -285,9 +290,7 @@ var render = function() {
     }
     if (goalie.position.x > 10 && goalieLV.x > 1 ||
         goalie.position.x < -10 && goalieLV.x < -1) {
-        goalie.setLinearVelocity(
-            goalieLV.add({ x: -goalieLV.x, y: 0, z: 0 })
-        );
+        goalie.setLinearVelocity({ x: 0, y: goalieLV.y, z: 0 });
     }
 
 
