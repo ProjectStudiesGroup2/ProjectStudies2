@@ -186,6 +186,16 @@ scene.add(goalie);
     /*** Controls ***/
 var goalieMoving = false;
 document.addEventListener('keydown', function(event) {
+    if (event.key == "r") {
+        goalie.position.set(0, 4, -35);
+        goalie.__dirtyPosition = true;
+        goalie.rotation.set(0, 0, 0);
+        goalie.__dirtyRotation = true;
+        goalie.setLinearVelocity({ x: 0, y: 0, z: 0 });
+        goalie.setAngularVelocity({ x: 0, y: 0, z: 0 });
+    }
+
+
     goalieSpeed = 100;
     var goalieLV = goalie.getLinearVelocity()
 
