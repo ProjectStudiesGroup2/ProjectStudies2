@@ -19,17 +19,26 @@
 </head>
 
 <body>
-    <div class="controlls">
+    <div class="controls">
         <h3>The penalty game</h3>
-        <p> Press the <img src="spacebar.png" class="img"> to choose a stangth of the kick.</p>              
-        <p> Use a mouse to chose the angle. </p>
+        <p> Hold the <img src="spacebar.png" class="img"> to choose a strength of the kick. Release when you think that it is your desired strenght.</p>              
+        <p> Then, chose the angle of kick by holding <img src="mouseLeftKey.png" class="img3"> and moving to needed direction. </p>
         <p> Press <img src="Wbar.png" class="img2"> to kick the ball.</p> 
-        <i>The stength of the kick is shown on the right side of the screen.</i> 
-        <p>Kick strength: <i id="kickStr"></i></p> 
-        <div class="box3"></div> 
-        <div id="scaleAppend"></div>  <!-- <div id="scale" class="box"></div> -->  
-        <div id="boxAppend"></div>  <!-- <div class="box2"></div> -->        
-        <p id="message"></p>
+        <p><i>The stength of the kick is shown on the right side of the screen.</i></p>        
+        <p id="ok"><a>Ok, I got it!</a></p>
+    </div>    
+    <p id="message"></p>
+
+    <p class="showCntr"><a>Show the controls</a></p>
+    <p class="max">MAX</p>
+    <p class="min">MIN</p>
+    
+    <!-- Strength bar -->
+    <div class="box3"></div> 
+    <div id="scaleAppend"></div>  <!-- <div id="scale" class="box"></div> -->  
+    <div id="boxAppend"></div>  <!-- <div class="box2"></div> -->     
+    <div class="kickStrangth">         
+        <h4>Kick strength: <i id="kickStr"></i></h4> 
     </div>
 
     <!-- Scripts for three.js scene -->
