@@ -49,16 +49,16 @@ controls.maxDistance = 100;
 
     /*** Goalie ***/
 // var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
-//
+
 // camera.position.set(0, 25, -70);
-// camera.lookAt(new THREE.Vector3(0, 10, -30)) // for starting cam point
-//
+// camera.lookAt(new THREE.Vector3(0, 10, 20)) // for starting cam point
+
 // //  orbit controls for the cam
 // var controls = new THREE.OrbitControls(camera, renderer.domElement);
 // controls.maxPolarAngle = Math.PI * 0.5;
 // controls.target.set(0, 10, -30); // for orbit cam point
 // controls.minDistance = 30;
-// controls.maxDistance = 60;
+// controls.maxDistance = 50;
 
 
 
