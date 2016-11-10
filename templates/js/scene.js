@@ -27,7 +27,6 @@ var textureBall = textureLoader.load("img/ball.png");
 textureBall.anisotropy = 3;     //lower value if the view is too laggy
 
 var textureGoalie = textureLoader.load("img/goalie-textmap.jpg");
-// var textureGoalie = textureLoader.load("img/goalie.jpg");
 var textureWall1 = textureLoader.load("img/wallC.jpg");
 var textureWall2 = textureLoader.load("img/wallM.jpg");
 var textureWall3 = textureLoader.load("img/wallH.jpg");
@@ -78,6 +77,7 @@ $('#ok').click(function() {
 $('.showCntr').click(function() {
     $('.controls').show();
     $('.showCntr').hide();
+});
 
 
         /**************\
