@@ -25,7 +25,7 @@ textureGrass.wrapS = textureGrass.wrapT = THREE.RepeatWrapping;
 textureGrass.repeat.set(10, 10);
 var textureBall = textureLoader.load("img/ball.png");
 textureBall.anisotropy = 3;     //lower value if the view is too laggy
-var textureGoalie = textureLoader.load("img/ball1.jpg");
+var textureGoalie = textureLoader.load("img/goalie.jpg");
 
 
 
@@ -36,7 +36,7 @@ var textureGoalie = textureLoader.load("img/ball1.jpg");
     /*** Kicker ***/
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 23), .1, 1000);
 
-camera.position.set(30, 30, 30);
+camera.position.set(0, 25, 70);
 camera.lookAt(new THREE.Vector3(0, 0, 0)); // for starting cam point
 
 // orbit controls for the cam
@@ -66,24 +66,25 @@ controls.maxDistance = 100;
         |*   Lights   *|
         \**************/
 
-var spotLight = new THREE.SpotLight(0xffffff, 1);
-spotLight.castShadow = true;
-spotLight.position.set(5, 60, 60);
+var ambLight = new THREE.AmbientLight(0xffffff, 0.6);
+ambLight.position.set(0, 60, 0);
+scene.add(ambLight);
+var spotLight = new THREE.SpotLight(0xffffff, 0.7);
+spotLight.castShadow = false;
+spotLight.position.set(100, 80, 100);
 spotLight.shadow.camera.near = 1;
 spotLight.shadowDarkness = 0.2;
 spotLight.shadowMapWidth = 3048;
 spotLight.shadowMapHeight = 3048;
 scene.add(spotLight);
-var spotLight2 = new THREE.SpotLight(0xffffff, 1);
+var spotLight2 = new THREE.SpotLight(0xffffff, 0.7);
 spotLight2.castShadow = true;
-spotLight2.position.set(5, 50, -60);
+spotLight2.position.set(0, 80, 50);
 spotLight2.shadow.camera.near = 1;
 spotLight2.shadowDarkness = 0.2;
 spotLight2.shadowMapWidth = 3048;
 spotLight2.shadowMapHeight = 3048;
 scene.add(spotLight2);
-
-
 
         /*************\
         |*   Scene   *|
@@ -100,6 +101,7 @@ plane.rotation.x = -.5 * Math.PI;
 plane.receiveShadow = true;
 scene.add(plane);
 
+ambLight.target = plane;
 spotLight.target = plane;
 spotLight2.target = plane;
 
@@ -116,6 +118,9 @@ post1.position.set(-10, goalHeight - 10, -40);
 post2.position.set(10, goalHeight - 10, -40);
 crossbar.position.set(0, goalHeight, -40);
 crossbar.rotation.z = -.5 * Math.PI;
+post1.castShadow = true;
+post2.castShadow = true;
+crossbar.castShadow = true;
 scene.add(post1);
 scene.add(post2);
 scene.add(crossbar);
@@ -148,7 +153,7 @@ var ball = new Physijs.SphereMesh(
     new THREE.SphereGeometry(2, 12, 12),
     new THREE.MeshLambertMaterial({ color: 0xffffff, map: textureBall })
 );
-ball.position.set(0, 5.5, 0);
+ball.position.set(0, 5.5, 20);
 ball.castShadow = true;
 scene.add(ball);
 
@@ -196,7 +201,7 @@ document.addEventListener('keydown', function(event) {
     /*** Object ***/
 var goalie = new Physijs.BoxMesh(
     new THREE.BoxGeometry(5, 7, 3),
-    new THREE.MeshBasicMaterial({ map: textureGoalie })
+    new THREE.MeshLambertMaterial({ map: textureGoalie })
 );
 goalie.position.set(0, 4, -35);
 goalie.castShadow = true;
