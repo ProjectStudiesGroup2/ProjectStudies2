@@ -12,7 +12,7 @@ var scene = new Physijs.Scene();
     /*** Renderer ***/
 var renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(0xdddddd);
-renderer.setSize(window.innerWidth, window.innerHeight - 23);
+renderer.setSize(window.innerWidth, window.innerHeight - 4);
 renderer.shadowMap.enabled = true;
 renderer.shadowMapSoft = true;
 document.body.appendChild(renderer.domElement);
@@ -34,7 +34,7 @@ var textureGoalie = textureLoader.load("img/goalie.jpg");
         \**************/
 
     /*** Kicker ***/
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 23), .1, 1000);
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
 
 camera.position.set(0, 25, 70);
 camera.lookAt(new THREE.Vector3(0, 0, 0)); // for starting cam point
@@ -48,7 +48,7 @@ controls.maxDistance = 100;
 
 
     /*** Goalie ***/
-// var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 23), .1, 1000);
+// var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
 //
 // camera.position.set(0, 25, -70);
 // camera.lookAt(new THREE.Vector3(0, 10, -30)) // for starting cam point
@@ -170,15 +170,15 @@ var scale = true;
 
 document.addEventListener('keydown', function(event) {    
     var ballLV = ball.getLinearVelocity();
-    $('#scale').height() == 300;     
+    $('#scale').height() == 600;     
 
     if (event.key == space) {
         setTimeout(function() {
              if (scale){
                 $( "#scaleAppend" ).empty();
                 $( "#boxAppend" ).empty();
-                $( "#scaleAppend" ).delay(1150).append('<div id="scale" class="box">&nbsp;</div>');
-                $( "#boxAppend" ).delay(1150).append('<div class="box2"></div>');
+                $( "#scaleAppend" ).delay(1170).append('<div id="scale" class="box"></div>');
+                $( "#boxAppend" ).delay(1170).append('<div class="box2"></div>');
                 scale = false;
              };
         }, 100);        
@@ -191,11 +191,11 @@ document.addEventListener('keydown', function(event) {
         
         ballLV = ball.getLinearVelocity();    
         setTimeout(function() {            
-            if ($('#scale').height() == 300){
-                $('#scale').animate({ height: 1 }, 300);       
+            if ($('#scale').height() == 600){
+                $('#scale').animate({ height: 1 }, 280);       
             }   
             else if ($('#scale').height() == 1){
-                $('#scale').animate({ height: 300 }, 300);
+                $('#scale').animate({ height: 600 }, 280);
             }
         });           
     }
