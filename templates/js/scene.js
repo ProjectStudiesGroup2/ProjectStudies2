@@ -144,15 +144,17 @@ var scale = true;
 
 document.addEventListener('keydown', function(event) {    
     var ballLV = ball.getLinearVelocity();
-    $('#scale').width() == 1;     
+    $('#scale').height() == 300;     
 
     if (event.key == space) {
         setTimeout(function() {
-            if (scale){
+             if (scale){
                 $( "#scaleAppend" ).empty();
-                $( "#scaleAppend" ).delay(1000).append('<div id="scale" class="box">&nbsp;</div>');
+                $( "#boxAppend" ).empty();
+                $( "#scaleAppend" ).delay(1150).append('<div id="scale" class="box">&nbsp;</div>');
+                $( "#boxAppend" ).delay(1150).append('<div class="box2"></div>');
                 scale = false;
-            };
+             };
         }, 100);        
         lastKeyUpAt ++;          
         if (lastKeyUpAt >= 20) {
@@ -162,16 +164,16 @@ document.addEventListener('keydown', function(event) {
         ballBlocked = false;
         
         ballLV = ball.getLinearVelocity();    
-        setTimeout(function() {
-            if ($('#scale').width() == 1){
-                $('#scale').animate({ width: 300 }, 300);
-            }
-            else if ($('#scale').width() == 300){
-                $('#scale').animate({ width: 1   }, 300);       
+        setTimeout(function() {            
+            if ($('#scale').height() == 300){
+                $('#scale').animate({ height: 1 }, 300);       
             }   
+            else if ($('#scale').height() == 1){
+                $('#scale').animate({ height: 300 }, 300);
+            }
         });           
     }
-    else if (!ballMoving || event.key == "w") {
+    else if (!ballMoving || event.key == "w" || event.key == "ц") {
         switch (event.key) {            
             case "w":
                 ball.setLinearVelocity(
@@ -198,19 +200,23 @@ document.addEventListener('keyup', function(event) {
             ballSpeed = 5; 
             ballVertAngle = 2;          
         } 
-        else if (lastKeyUpAt >= 17) {
+        else if (lastKeyUpAt >= 18) {
             ballSpeed = 10;  
             ballVertAngle = 3;         
         } 
-        else if (lastKeyUpAt >= 15) {
+        else if (lastKeyUpAt >= 17) {
             ballSpeed = 20; 
             ballVertAngle = 4;          
+        } 
+        else if (lastKeyUpAt >= 14) {
+            ballSpeed = 25; 
+            ballVertAngle = 5;        
         } 
         else if (lastKeyUpAt >= 13) {
             ballSpeed = 30; 
             ballVertAngle = 5;        
         } 
-        else if (lastKeyUpAt >= 11) {            
+        else if (lastKeyUpAt >= 12) {            
             ballSpeed = 50;  
             ballVertAngle = 5;        
         } 
@@ -255,7 +261,7 @@ document.addEventListener('keyup', function(event) {
         return ballSpeed, ballVertAngle;
     }
 
-    if ( event.key == "w" || !ballMoving ) {
+    if ( !ballMoving || event.key == "w" || event.key == "ц") {
         var ballLV = ball.getLinearVelocity();
         ball.setLinearVelocity(
         ballLV.add({ z: -ballLV.x, x: 0, y: ballVertAngle })
@@ -278,7 +284,8 @@ var ballBlocked = false;
     /*** Object ***/
 var goalie = new Physijs.BoxMesh(
     new THREE.BoxGeometry(5, 7, 3),
-    new THREE.MeshBasicMaterial({ color: 0x307460 })
+    new THREE.MeshBasicMaterial({ color: 0x307460 }),
+    1000
 );
 goalie.position.set(0, 4, -35);
 goalie.castShadow = true;
