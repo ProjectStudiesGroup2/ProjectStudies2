@@ -317,6 +317,16 @@ var grid = new THREE.GridHelper(50, 10);
 scene.add(grid);
 
 
+    /*** Arrow ***/
+var arrow = new THREE.ArrowHelper(
+    new THREE.Vector3( 0.5, 0.5, 0.5 ),
+    new THREE.Vector3( 0, 2, 20 ),
+    15,
+    0xffa000
+);
+scene.add(arrow);
+
+
 
         /*****************\
         |*   Rendering   *|
@@ -370,6 +380,15 @@ var render = function() {
 
     // netGeometry.normalsNeedUpdate = true;
     // netGeometry.verticesNeedUpdate = true;
+
+
+    /*** Arrow ***/
+    var dist = camera.position.distanceTo(arrow.position);
+    arrow.setDirection({
+        x: -((camera.position.x - arrow.position.x) / dist),
+        y: -((camera.position.y - arrow.position.y) / dist) + 0.3,
+        z: -((camera.position.z - arrow.position.z) / dist)
+    });
 
 
     scene.simulate();
