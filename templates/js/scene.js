@@ -12,7 +12,7 @@ var scene = new Physijs.Scene();
     /*** Renderer ***/
 var renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(0xdddddd);
-renderer.setSize(window.innerWidth, window.innerHeight - 23);
+renderer.setSize(window.innerWidth, window.innerHeight - 4);
 renderer.shadowMap.enabled = true;
 renderer.shadowMapSoft = true;
 document.body.appendChild(renderer.domElement);
@@ -34,7 +34,7 @@ var textureGoalie = textureLoader.load("img/goalie.jpg");
         \**************/
 
     /*** Kicker ***/
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 23), .1, 1000);
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
 
 camera.position.set(0, 25, 70);
 camera.lookAt(new THREE.Vector3(0, 10, 20)); // for starting cam point
@@ -48,7 +48,7 @@ controls.maxDistance = 100;
 
 
     /*** Goalie ***/
-// var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 23), .1, 1000);
+// var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
 //
 // camera.position.set(0, 25, -70);
 // camera.lookAt(new THREE.Vector3(0, 10, -30)) // for starting cam point
@@ -128,10 +128,10 @@ scene.add(crossbar);
 
     /*** Trigger ***/
 var trigger = new THREE.Mesh(
-    new THREE.CubeGeometry(18, 20, 0.1),
-    new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true })
+    new THREE.CubeGeometry(18, 20, 0.2), 
+    new THREE.MeshBasicMaterial({ wireframe: true, visible: false }) 
 );
-trigger.position.set(0, 1, -40);
+trigger.position.set(0, 1, -40.2);
 scene.add(trigger);
 
 var collidableMeshList = [];
@@ -159,38 +159,147 @@ scene.add(ball);
 
 
     /*** Controls ***/
-var clock = new THREE.Clock();
-var keyboard = new KeyboardState();
+var ballMoving = false;
 
-document.addEventListener('keydown', function(event) {
-    keyboard.update();
+var lastKeyUpAt = -1;
+var ballSpeed = 0;
+var ballVertAngle = 0;
+var space = " ";  
 
-    var moveDistance = 10 * clock.getDelta();
+var scale = true;
 
-    if (keyboard.pressed("A")) {
-        ball.translateX(-moveDistance);
-        ball.__dirtyPosition = true;
+document.addEventListener('keydown', function(event) {    
+    var ballLV = ball.getLinearVelocity();
+    $('#scale').height() == 600;     
+
+    if (event.key == space) {
+        setTimeout(function() {
+             if (scale){
+                $( "#scaleAppend" ).empty();
+                $( "#boxAppend" ).empty();
+                $( "#scaleAppend" ).delay(1170).append('<div id="scale" class="box"></div>');
+                $( "#boxAppend" ).delay(1170).append('<div class="box2"></div>');
+                scale = false;
+             };
+        }, 100);        
+        lastKeyUpAt ++;          
+        if (lastKeyUpAt >= 20) {
+            lastKeyUpAt = -1;    
+            return lastKeyUpAt;
+        }    
+        ballBlocked = false;
+        
+        ballLV = ball.getLinearVelocity();    
+        setTimeout(function() {            
+            if ($('#scale').height() == 600){
+                $('#scale').animate({ height: 1 }, 280);       
+            }   
+            else if ($('#scale').height() == 1){
+                $('#scale').animate({ height: 600 }, 280);
+            }
+        });           
     }
-
-    if (keyboard.pressed("D")) {
-        ball.translateX(moveDistance);
-        ball.__dirtyPosition = true;
-    }
-
-    if (keyboard.pressed("W")) {
-        ball.translateZ(-moveDistance);
-        ball.__dirtyPosition = true;
-    }
-
-    if (keyboard.pressed("S")) {
-        ball.translateZ(moveDistance);
-        ball.__dirtyPosition = true;
-    }
-
-    controls.update();
-    stats.update();
-
+    else if (!ballMoving || event.key == "w" || event.key == "ц") {
+        switch (event.key) {            
+            case "w":
+                ball.setLinearVelocity(
+                    ballLV.add({ z: -ballSpeed, x: 0, y: ballVertAngle })
+                );
+                ballMoving = true;
+                break;
+        }    
+        ballSpeed = 0;
+        ballVertAngle = 0;
+    }              
+    console.log( "lastKeyUpAt = " + lastKeyUpAt );         
+    return ballSpeed, ballVertAngle;
 }, false);
+
+document.addEventListener('keyup', function(event) {
+    if (event.key == space) {
+        var ballLV = ball.getLinearVelocity()
+       
+        if (lastKeyUpAt >= 20) {
+            ballSpeed = 1;          
+        } 
+        else if (lastKeyUpAt >= 19) {
+            ballSpeed = 5; 
+            ballVertAngle = 2;          
+        } 
+        else if (lastKeyUpAt >= 18) {
+            ballSpeed = 10;  
+            ballVertAngle = 3;         
+        } 
+        else if (lastKeyUpAt >= 17) {
+            ballSpeed = 20; 
+            ballVertAngle = 4;          
+        } 
+        else if (lastKeyUpAt >= 14) {
+            ballSpeed = 25; 
+            ballVertAngle = 5;        
+        } 
+        else if (lastKeyUpAt >= 13) {
+            ballSpeed = 30; 
+            ballVertAngle = 5;        
+        } 
+        else if (lastKeyUpAt >= 12) {            
+            ballSpeed = 50;  
+            ballVertAngle = 5;        
+        } 
+        else if (lastKeyUpAt >= 9) {
+            ballSpeed = 90; 
+            ballVertAngle = 6;
+        }   
+        else if (lastKeyUpAt >= 7) {
+            ballSpeed = 50; 
+            ballVertAngle = 5;
+        }   
+        else if (lastKeyUpAt >= 6) {
+            ballSpeed = 30; 
+            ballVertAngle = 5;
+        }   
+        else if (lastKeyUpAt >= 5) {
+            ballSpeed = 20; 
+            ballVertAngle = 4;
+        }  
+        else if (lastKeyUpAt >= 3) {
+            ballSpeed = 10; 
+            ballVertAngle = 3;
+        }  
+        else if (lastKeyUpAt >= 1) {
+            ballSpeed = 5; 
+            ballVertAngle = 2;
+        }  
+        else if (lastKeyUpAt >= 0) {
+            ballSpeed = 1;             
+        }  
+        
+        switch (event.key) {
+            case space:
+                lastKeyUpAt = 0; 
+                console.log( "Ball speed = " + ballSpeed + "; VertAngle = " + ballVertAngle );  
+                $( "#kickStr" ).empty();
+                $( "#kickStr" ).append( ballSpeed );
+                ballMoving = false;   
+                break;             
+        }          
+        $( "#scale" ).stop();
+        return ballSpeed, ballVertAngle;
+    }
+
+    if ( !ballMoving || event.key == "w" || event.key == "ц") {
+        var ballLV = ball.getLinearVelocity();
+        ball.setLinearVelocity(
+        ballLV.add({ z: -ballLV.x, x: 0, y: ballVertAngle })
+        );        
+        ballSpeed = 0;
+        ballVertAngle = 0;
+        ballMoving = true;        
+    }  
+   
+}, false);
+
+var ballBlocked = false;
 
 
 
@@ -302,7 +411,7 @@ scene.add(arrow);
         |*   Rendering   *|
         \*****************/
 
-function clearText() { document.getElementById('message').innerHTML = '....'; }
+function clearText() { document.getElementById('message').innerHTML = ''; }
 function appendText(txt) { document.getElementById('message').innerHTML += txt; }
 
 var render = function() {
