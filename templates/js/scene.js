@@ -313,7 +313,7 @@ var ballBlocked = false;
 
     /*** Object ***/
 var goalie = new Physijs.BoxMesh(
-    new THREE.BoxGeometry(5, 7, 3),
+    new THREE.BoxGeometry(6, 8, 3),
     new THREE.MeshLambertMaterial({ map: textureGoalie }),
     1000
 );
