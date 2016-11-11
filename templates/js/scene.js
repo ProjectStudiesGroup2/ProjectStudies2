@@ -1,13 +1,18 @@
     /* Local */
-Physijs.scripts.worker = './js/physijs_worker.js';
-Physijs.scripts.ammo = 'ammo.js';
+// Physijs.scripts.worker = './js/physijs_worker.js';
+// Physijs.scripts.ammo = 'ammo.js';
     /* Flask */
-// Physijs.scripts.worker = '/js/physijs_worker.js';
-// Physijs.scripts.ammo = '/js/ammo.js';
+Physijs.scripts.worker = '/js/physijs_worker.js';
+Physijs.scripts.ammo = '/js/ammo.js';
+
+
+    /*** Socket.IO ***/
+var socket = io();
 
 
     /*** Scene ***/
 var scene = new Physijs.Scene();
+
 
     /*** Renderer ***/
 var renderer = new THREE.WebGLRenderer();
@@ -16,6 +21,7 @@ renderer.setSize(window.innerWidth, window.innerHeight - 4);
 renderer.shadowMap.enabled = true;
 renderer.shadowMapSoft = true;
 document.body.appendChild(renderer.domElement);
+
 
     /*** Textures ***/
 var textureLoader = new THREE.TextureLoader();
@@ -37,6 +43,7 @@ var textureWall3 = textureLoader.load("img/wallH.jpg");
         |*   Camera   *|
         \**************/
 
+{% if player == 1 %}
     /*** Kicker ***/
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
 
@@ -50,18 +57,36 @@ controls.target.set(0, 10, 20); // for orbit cam point
 controls.minDistance = 30;
 controls.maxDistance = 100;
 
+
+{% elif player == 2 %}
     /*** Goalie ***/
-// var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
 
-// camera.position.set(0, 25, -70);
-// camera.lookAt(new THREE.Vector3(0, 10, 20)) // for starting cam point
+camera.position.set(0, 25, -70);
+camera.lookAt(new THREE.Vector3(0, 10, 20)) // for starting cam point
 
-// //  orbit controls for the cam
-// var controls = new THREE.OrbitControls(camera, renderer.domElement);
-// controls.maxPolarAngle = Math.PI * 0.5;
-// controls.target.set(0, 10, -30); // for orbit cam point
-// controls.minDistance = 30;
-// controls.maxDistance = 50;
+//  orbit controls for the cam
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.maxPolarAngle = Math.PI * 0.5;
+controls.target.set(0, 10, -30); // for orbit cam point
+controls.minDistance = 30;
+controls.maxDistance = 100;
+
+
+{% else %}
+    /*** Viewer ***/
+var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
+
+camera.position.set(30, 30, 30);
+camera.lookAt(new THREE.Vector3(0, 10, 0)); // for starting cam point
+
+// orbit controls for the cam
+var controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.maxPolarAngle = Math.PI * 0.5;
+controls.target.set(0, 10, 0); // for orbit cam point
+controls.minDistance = 30;
+controls.maxDistance = 100;
+{% endif %}
 
 
 
@@ -149,7 +174,7 @@ scene.add(crossbar);
 
     /*** The walls around the field ***/
 var wall1 = new Physijs.BoxMesh(
-    new THREE.PlaneGeometry(33, 20, 0.2), 
+    new THREE.PlaneGeometry(33, 20, 0.2),
     new THREE.MeshLambertMaterial({ map: textureWall1 }),
     10000
 );
@@ -158,7 +183,7 @@ wall1.castShadow = true;
 scene.add(wall1);
 
 var wall2 = new Physijs.BoxMesh(
-    new THREE.PlaneGeometry(33, 20, 0.2), 
+    new THREE.PlaneGeometry(33, 20, 0.2),
     new THREE.MeshLambertMaterial({ map: textureWall2 }),
     10000
 );
@@ -167,7 +192,7 @@ wall2.castShadow = true;
 scene.add(wall2);
 
 var wall3 = new Physijs.BoxMesh(
-    new THREE.PlaneGeometry(33, 20, 0.2), 
+    new THREE.PlaneGeometry(33, 20, 0.2),
     new THREE.MeshLambertMaterial({ map: textureWall3 }),
     10000
 );
@@ -177,8 +202,8 @@ scene.add(wall3);
 
     /*** Trigger ***/
 var trigger = new THREE.Mesh(
-    new THREE.CubeGeometry(18, 20, 0.2), 
-    new THREE.MeshBasicMaterial({ wireframe: true, visible: false }) 
+    new THREE.CubeGeometry(18, 20, 0.2),
+    new THREE.MeshBasicMaterial({ wireframe: true, visible: false })
 );
 trigger.position.set(0, 1, -40.2);
 scene.add(trigger);
@@ -209,19 +234,48 @@ ball.position.set(0, 5.5, 20);
 ball.castShadow = true;
 scene.add(ball);
 
+
+    /*** Socket ***/
+{% if player == 1 %}
+function sendBall() {
+    var pos = ball.position;
+    var rot = ball.rotation;
+    var lv = ball.getLinearVelocity();
+    var av = ball.getAngularVelocity();
+    socket.emit('ball', {
+        'pos': pos,
+        'rot': rot,
+        'lv': lv,
+        'av': av
+    });
+}
+
+{% else %}
+socket.on('ball', function(json) {
+    ball.position.set(json.pos.x, json.pos.y, json.pos.z);
+    ball.__dirtyPosition = true;
+    ball.rotation.set(json.rot._x, json.rot._y, json.rot._z);
+    ball.__dirtyRotation = true;
+    ball.setLinearVelocity(json.lv);
+    ball.setAngularVelocity(json.av);
+});
+{% endif %}
+
+
+{% if player == 1 %}
     /*** Controls ***/
 var ballMoving = false;
 
 var lastKeyUpAt = -1;
 var ballSpeed = 0;
 var ballVertAngle = 0;
-var space = " ";  
+var space = " ";
 
 var scale = true;
 
-document.addEventListener('keydown', function(event) {    
+document.addEventListener('keydown', function(event) {
     var ballLV = ball.getLinearVelocity();
-    $('#scale').height() == 600;  
+    $('#scale').height() == 600;
 
     if (event.key == space) {
         setTimeout(function() {
@@ -230,120 +284,121 @@ document.addEventListener('keydown', function(event) {
                 $( "#boxAppend" ).empty();
                 $( "#scaleAppend" ).delay(1170).append('<div id="scale" class="box"></div>');
                 $( "#boxAppend" ).delay(1170).append('<div class="box2"></div>');
-                scale = false;               
+                scale = false;
              };
-        }, 100);        
-        lastKeyUpAt ++;          
+        }, 100);
+        lastKeyUpAt ++;
         if (lastKeyUpAt >= 20) {
-            lastKeyUpAt = -1;    
+            lastKeyUpAt = -1;
             return lastKeyUpAt;
-        }    
+        }
         ballBlocked = false;
-        
-        ballLV = ball.getLinearVelocity();    
-        setTimeout(function() {            
+
+        ballLV = ball.getLinearVelocity();
+        setTimeout(function() {
             if ($('#scale').height() == 600){
-                $('#scale').animate({ height: 1 }, 300);       
-            }   
+                $('#scale').animate({ height: 1 }, 300);
+            }
             else if ($('#scale').height() == 1){
                 $('#scale').animate({ height: 600 }, 300);
             }
-        });   
+        });
         goalT = false;
-        return goalT;        
+        return goalT;
     }
     else if (!ballMoving || event.key == "w" || event.key == "ц") {
-        switch (event.key) {            
+        switch (event.key) {
             case "w":
                 var dist = camera.position.distanceTo(arrow.position);
                 ball.setLinearVelocity(
-                    ballLV.add({ 
+                    ballLV.add({
                         x: -((camera.position.x - arrow.position.x) / dist) * ballSpeed,
                         y: (-((camera.position.y - arrow.position.y) / dist) + 0.35) * ballSpeed,
                         z: -((camera.position.z - arrow.position.z) / dist) * ballSpeed })
                 );
+                sendBall();
                 ballMoving = true;
                 break;
-        }    
+        }
         ballSpeed = 0;
         ballVertAngle = 0;
-    }              
-    console.log( "lastKeyUpAt = " + lastKeyUpAt );         
+    }
+    console.log( "lastKeyUpAt = " + lastKeyUpAt );
     return ballSpeed, ballVertAngle, goalT;
 }, false);
 
 document.addEventListener('keyup', function(event) {
     if (event.key == space) {
         var ballLV = ball.getLinearVelocity()
-       
+
         if (lastKeyUpAt >= 20) {
-            ballSpeed = 5;          
-        } 
+            ballSpeed = 5;
+        }
         else if (lastKeyUpAt >= 19) {
-            ballSpeed = 10; 
-            ballVertAngle = 2;          
-        } 
-        else if (lastKeyUpAt >= 18) {
-            ballSpeed = 15;  
-            ballVertAngle = 3;         
-        } 
-        else if (lastKeyUpAt >= 17) {
-            ballSpeed = 30; 
-            ballVertAngle = 4;          
-        } 
-        else if (lastKeyUpAt >= 15) {
-            ballSpeed = 40; 
-            ballVertAngle = 5;        
-        } 
-        else if (lastKeyUpAt >= 14) {
-            ballSpeed = 50; 
-            ballVertAngle = 5;        
-        } 
-        else if (lastKeyUpAt >= 12) {            
-            ballSpeed = 70;  
-            ballVertAngle = 6;        
-        } 
-        else if (lastKeyUpAt >= 9) {
-            ballSpeed = 90; 
-            ballVertAngle = 8;
-        }   
-        else if (lastKeyUpAt >= 7) {
-            ballSpeed = 70; 
-            ballVertAngle = 6;
-        }   
-        else if (lastKeyUpAt >= 6) {
-            ballSpeed = 50; 
-            ballVertAngle = 5;
-        }   
-        else if (lastKeyUpAt >= 5) {
-            ballSpeed = 40; 
-            ballVertAngle = 4;
-        }  
-        else if (lastKeyUpAt >= 4) {
-            ballSpeed = 30; 
-            ballVertAngle = 4;
-        }  
-        else if (lastKeyUpAt >= 3) {
-            ballSpeed = 15; 
-            ballVertAngle = 3;
-        }  
-        else if (lastKeyUpAt >= 1) {
-            ballSpeed = 10; 
+            ballSpeed = 10;
             ballVertAngle = 2;
-        }  
+        }
+        else if (lastKeyUpAt >= 18) {
+            ballSpeed = 15;
+            ballVertAngle = 3;
+        }
+        else if (lastKeyUpAt >= 17) {
+            ballSpeed = 30;
+            ballVertAngle = 4;
+        }
+        else if (lastKeyUpAt >= 15) {
+            ballSpeed = 40;
+            ballVertAngle = 5;
+        }
+        else if (lastKeyUpAt >= 14) {
+            ballSpeed = 50;
+            ballVertAngle = 5;
+        }
+        else if (lastKeyUpAt >= 12) {
+            ballSpeed = 70;
+            ballVertAngle = 6;
+        }
+        else if (lastKeyUpAt >= 9) {
+            ballSpeed = 90;
+            ballVertAngle = 8;
+        }
+        else if (lastKeyUpAt >= 7) {
+            ballSpeed = 70;
+            ballVertAngle = 6;
+        }
+        else if (lastKeyUpAt >= 6) {
+            ballSpeed = 50;
+            ballVertAngle = 5;
+        }
+        else if (lastKeyUpAt >= 5) {
+            ballSpeed = 40;
+            ballVertAngle = 4;
+        }
+        else if (lastKeyUpAt >= 4) {
+            ballSpeed = 30;
+            ballVertAngle = 4;
+        }
+        else if (lastKeyUpAt >= 3) {
+            ballSpeed = 15;
+            ballVertAngle = 3;
+        }
+        else if (lastKeyUpAt >= 1) {
+            ballSpeed = 10;
+            ballVertAngle = 2;
+        }
         else if (lastKeyUpAt >= 0) {
-            ballSpeed = 5;             
-        }  
-        
+            ballSpeed = 5;
+        }
+
         switch (event.key) {
             case space:
-                lastKeyUpAt = 0; 
-                console.log( "Ball speed = " + ballSpeed + "; VertAngle = " + ballVertAngle );  
+                lastKeyUpAt = 0;
+                console.log( "Ball speed = " + ballSpeed + "; VertAngle = " + ballVertAngle );
                 $( "#kickStr" ).empty();
                 $( "#kickStr" ).append( ballSpeed );
-                ballMoving = false;   
-                break;             
-        }          
+                ballMoving = false;
+                break;
+        }
         $( "#scale" ).stop();
         return ballSpeed, ballVertAngle;
     }
@@ -353,14 +408,16 @@ document.addEventListener('keyup', function(event) {
         ball.setLinearVelocity(
         ballLV.add({ z: -ballLV.x, x: 0, y: ballVertAngle })
         );
+        sendBall();
         ballSpeed = 0;
         ballVertAngle = 0;
         ballMoving = true;
-    }  
-   
+    }
+
 }, false);
 
 var ballBlocked = false;
+{% endif %}
 
 
 
@@ -404,6 +461,35 @@ goalie.position.set(0, 4, -35);
 goalie.castShadow = true;
 scene.add(goalie);
 
+
+    /*** Socket ***/
+{% if player == 2 %}
+function sendGoalie() {
+    var pos = goalie.position;
+    var rot = goalie.rotation;
+    var lv = goalie.getLinearVelocity();
+    var av = goalie.getAngularVelocity();
+    socket.emit('goalie', {
+        'pos': pos,
+        'rot': rot,
+        'lv': lv,
+        'av': av
+    });
+}
+
+{% else %}
+socket.on('goalie', function(json) {
+    goalie.position.set(json.pos.x, json.pos.y, json.pos.z);
+    goalie.__dirtyPosition = true;
+    goalie.rotation.set(json.rot._x, json.rot._y, json.rot._z);
+    goalie.__dirtyRotation = true;
+    goalie.setLinearVelocity(json.lv);
+    goalie.setAngularVelocity(json.av);
+});
+{% endif %}
+
+
+{% if player == 2 %}
     /*** Controls ***/
 var goalieMoving = false;
 document.addEventListener('keydown', function(event) {
@@ -414,16 +500,18 @@ document.addEventListener('keydown', function(event) {
         goalie.__dirtyRotation = true;
         goalie.setLinearVelocity({ x: 0, y: 0, z: 0 });
         goalie.setAngularVelocity({ x: 0, y: 0, z: 0 });
+        sendGoalie();
     }
 
 
-    goalieSpeed = 100;
+    goalieSpeed = 75;
     var goalieLV = goalie.getLinearVelocity()
 
     if (event.key == "i") {
         goalie.setLinearVelocity(
-            goalieLV.add({ x: -goalieLV.x, y: goalieSpeed / 2, z: 0 })
+            goalieLV.add({ x: -goalieLV.x, y: goalieSpeed / 1.5, z: 0 })
         );
+        sendGoalie();
         goalieBlocked = false;
 
     } else if (!goalieMoving) {
@@ -434,6 +522,7 @@ document.addEventListener('keydown', function(event) {
                     goalie.setLinearVelocity(
                         goalieLV.add({ x: goalieSpeed, y: 0, z: 0 })
                     );
+                    sendGoalie();
                     goalieMoving = true;
                 }
                 break;
@@ -443,6 +532,7 @@ document.addEventListener('keydown', function(event) {
                 goalie.setLinearVelocity(
                     goalieLV.add({ x: -goalieSpeed, y: 0, z: 0 })
                 );
+                sendGoalie();
                 goalieMoving = true;
             }
                 break;
@@ -457,6 +547,7 @@ document.addEventListener('keyup', function(event) {
             case "j":
             case "l":
                 goalie.setLinearVelocity(goalieLV.add({ x: -goalieLV.x, y: 0, z: 0 }));
+                sendGoalie();
                 goalieMoving = false;
                 break;
         }
@@ -464,6 +555,7 @@ document.addEventListener('keyup', function(event) {
 }, false);
 
 var goalieBlocked = false;
+{% endif %}
 
 
 
@@ -471,23 +563,30 @@ var goalieBlocked = false;
         |*   Visual Help   *|
         \*******************/
 
-    /*** Axis ***/
-var axis = new THREE.AxisHelper(10);
-axis.position.set(0, .25, 0);
-scene.add(axis);
-
-    /*** Grid ***/
-var grid = new THREE.GridHelper(50, 10);
-scene.add(grid);
+//     /*** Axis ***/
+// var axis = new THREE.AxisHelper(10);
+// axis.position.set(0, .25, 0);
+// scene.add(axis);
+//
+//
+//     /*** Grid ***/
+// var grid = new THREE.GridHelper(50, 10);
+// scene.add(grid);
 
     /*** Arrow ***/
 var arrow = new THREE.ArrowHelper(
     new THREE.Vector3( 0.5, 0.5, 0.5 ),
     new THREE.Vector3( 0, 2, 20 ),
     15,
-    0xffa000
+    0xff3300
 );
 scene.add(arrow);
+
+{% if player != 1 %}
+socket.on('arrow', function(json) {
+    arrow.setDirection(json);
+});
+{% endif %}
 
 
 
@@ -499,13 +598,13 @@ function clearText()
 
 var render = function() {
 
-    requestAnimationFrame(render); 
-    
-        /*** Ball ***/       
+    requestAnimationFrame(render);
+
+        /*** Ball ***/
     var originPoint = ball.position.clone();
-    if (goalT == true) {        
+    if (goalT == true) {
         $('#message').empty();
-    }    
+    }
     for (var vertexIndex = 1; vertexIndex < ball.geometry.vertices.length; vertexIndex++) {
         var localVertex = ball.geometry.vertices[vertexIndex].clone();
         var globalVertex = localVertex.applyMatrix4(ball.matrix);
@@ -513,31 +612,41 @@ var render = function() {
 
         var ray = new THREE.Raycaster(originPoint, directionVector.clone().normalize());
         var collisionResults = ray.intersectObjects(collidableMeshList);
-        if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()  ) { 
+        if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()  ) {
             $('#message').hide().fadeIn(200).empty().append('GOAL!');
-        }; 
+        };
     }
 
+
+{% if player == 2 %}
         /*** Goalie ***/
     var goalieLV = goalie.getLinearVelocity()
     if (goalie.position.y > goalHeight - 2 && !goalieBlocked) {
         goalie.setLinearVelocity(
             goalieLV.add({ x: 0, y: -goalieLV.y * 1.2, z: 0 })
         );
+        sendGoalie();
         goalieBlocked = true;
     }
     if (goalie.position.x > 10 && goalieLV.x > 1 ||
         goalie.position.x < -10 && goalieLV.x < -1) {
         goalie.setLinearVelocity({ x: 0, y: goalieLV.y, z: 0 });
+        sendGoalie();
     }
+{% endif %}
 
-        /*** Arrow ***/
+
+    /*** Arrow ***/
+{% if player == 1 %}
     var dist = camera.position.distanceTo(arrow.position);
-    arrow.setDirection({
+    var dir = {
         x: -((camera.position.x - arrow.position.x) / dist),
         y: -((camera.position.y - arrow.position.y) / dist) + 0.3,
         z: -((camera.position.z - arrow.position.z) / dist)
-    });
+    };
+    arrow.setDirection(dir);
+    socket.emit('arrow', dir)
+{% endif %}
 
 
     scene.simulate();
