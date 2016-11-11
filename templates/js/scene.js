@@ -50,7 +50,6 @@ controls.target.set(0, 10, 20); // for orbit cam point
 controls.minDistance = 30;
 controls.maxDistance = 100;
 
-
     /*** Goalie ***/
 // var camera = new THREE.PerspectiveCamera(45, window.innerWidth / (window.innerHeight - 4), .1, 1000);
 
@@ -64,9 +63,12 @@ controls.maxDistance = 100;
 // controls.minDistance = 30;
 // controls.maxDistance = 50;
 
+
+
         /******************************\
         |*   Interface for controls   *|
         \******************************/
+
 $('.showCntr').hide();
 
 $('#ok').click(function() {
@@ -78,6 +80,7 @@ $('.showCntr').click(function() {
     $('.controls').show();
     $('.showCntr').hide();
 });
+
 
 
         /**************\
@@ -104,6 +107,8 @@ spotLight2.shadowMapWidth = 3048;
 spotLight2.shadowMapHeight = 3048;
 scene.add(spotLight2);
 
+
+
         /*************\
         |*   Scene   *|
         \*************/
@@ -122,7 +127,6 @@ scene.add(plane);
 ambLight.target = plane;
 spotLight.target = plane;
 spotLight2.target = plane;
-
 
     /*** Goal ***/
 var postGeometry = new THREE.CylinderGeometry(.5, .5, 20);
@@ -143,10 +147,9 @@ scene.add(post1);
 scene.add(post2);
 scene.add(crossbar);
 
-
     /*** The walls around the field ***/
 var wall1 = new Physijs.BoxMesh(
-    new THREE.CubeGeometry(33, 20, 0.2), 
+    new THREE.PlaneGeometry(33, 20, 0.2), 
     new THREE.MeshLambertMaterial({ map: textureWall1 }),
     1000000 
 );
@@ -155,7 +158,7 @@ wall1.castShadow = true;
 scene.add(wall1);
 
 var wall2 = new Physijs.BoxMesh(
-    new THREE.CubeGeometry(33, 20, 0.2), 
+    new THREE.PlaneGeometry(33, 20, 0.2), 
     new THREE.MeshLambertMaterial({ map: textureWall2 }),
     1000000 
 );
@@ -164,14 +167,13 @@ wall2.castShadow = true;
 scene.add(wall2);
 
 var wall3 = new Physijs.BoxMesh(
-    new THREE.CubeGeometry(33, 20, 0.2), 
+    new THREE.PlaneGeometry(33, 20, 0.2), 
     new THREE.MeshLambertMaterial({ map: textureWall3 }),
     1000000 
 );
 wall3.position.set(-33, 10, -49);
 wall3.castShadow = true;
 scene.add(wall3);
-
 
     /*** Trigger ***/
 var trigger = new THREE.Mesh(
@@ -194,18 +196,18 @@ stats.domElement.style.zIndex = 100;
         /************\
         |*   Ball   *|
         \************/
+
     /*** To hide the goal message ***/
 var goalT = true;
 
     /*** Object ***/
 var ball = new Physijs.SphereMesh(
-    new THREE.SphereGeometry(2, 12, 12),
+    new THREE.SphereGeometry(1.3, 12, 12),
     new THREE.MeshLambertMaterial({ color: 0xffffff, map: textureBall })
 );
 ball.position.set(0, 5.5, 20);
 ball.castShadow = true;
 scene.add(ball);
-
 
     /*** Controls ***/
 var ballMoving = false;
@@ -402,7 +404,6 @@ goalie.position.set(0, 4, -35);
 goalie.castShadow = true;
 scene.add(goalie);
 
-
     /*** Controls ***/
 var goalieMoving = false;
 document.addEventListener('keydown', function(event) {
@@ -475,11 +476,9 @@ var axis = new THREE.AxisHelper(10);
 axis.position.set(0, .25, 0);
 scene.add(axis);
 
-
     /*** Grid ***/
 var grid = new THREE.GridHelper(50, 10);
 scene.add(grid);
-
 
     /*** Arrow ***/
 var arrow = new THREE.ArrowHelper(
@@ -532,8 +531,7 @@ var render = function() {
         goalie.setLinearVelocity({ x: 0, y: goalieLV.y, z: 0 });
     }
 
-
-    /*** Arrow ***/
+        /*** Arrow ***/
     var dist = camera.position.distanceTo(arrow.position);
     arrow.setDirection({
         x: -((camera.position.x - arrow.position.x) / dist),
