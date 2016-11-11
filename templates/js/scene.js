@@ -151,7 +151,7 @@ scene.add(crossbar);
 var wall1 = new Physijs.BoxMesh(
     new THREE.PlaneGeometry(33, 20, 0.2), 
     new THREE.MeshLambertMaterial({ map: textureWall1 }),
-    1000
+    10000
 );
 wall1.position.set(0, 10, -49);
 wall1.castShadow = true;
@@ -160,7 +160,7 @@ scene.add(wall1);
 var wall2 = new Physijs.BoxMesh(
     new THREE.PlaneGeometry(33, 20, 0.2), 
     new THREE.MeshLambertMaterial({ map: textureWall2 }),
-    1000
+    10000
 );
 wall2.position.set(33, 10, -49);
 wall2.castShadow = true;
@@ -169,7 +169,7 @@ scene.add(wall2);
 var wall3 = new Physijs.BoxMesh(
     new THREE.PlaneGeometry(33, 20, 0.2), 
     new THREE.MeshLambertMaterial({ map: textureWall3 }),
-    1000
+    10000
 );
 wall3.position.set(-33, 10, -49);
 wall3.castShadow = true;
