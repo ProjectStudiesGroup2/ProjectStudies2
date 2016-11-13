@@ -367,14 +367,40 @@ var ballBlocked = false;
         \**************/
 
     /*** Object ***/
-var goalie = new Physijs.BoxMesh(
-    new THREE.BoxGeometry(6, 8, 3),
-    new THREE.MeshLambertMaterial({ map: textureGoalie }),
-    1000
-);
-goalie.position.set(0, 4, -35);
-goalie.castShadow = true;
-scene.add(goalie);
+		var goalieGeometry = new THREE.BoxGeometry(5, 7, 3);
+		var goalieMaterial = new THREE.MeshLambertMaterial({ map: textureGoalie });
+		var goalie = new Physijs.BoxMesh(goalieGeometry, goalieMaterial, 1000);
+
+			/*** Texture ***/
+		var front = [new THREE.Vector2(0, .666), new THREE.Vector2(.5, .666), new THREE.Vector2(.5, 1), new THREE.Vector2(0, 1)];
+		var back = [new THREE.Vector2(.5, .666), new THREE.Vector2(1, .666), new THREE.Vector2(1, 1), new THREE.Vector2(.5, 1)];
+		var sides = [new THREE.Vector2(0, .333), new THREE.Vector2(.5, .333), new THREE.Vector2(.5, .666), new THREE.Vector2(0, .666)];
+		var top = [new THREE.Vector2(0, 0), new THREE.Vector2(.5, 0), new THREE.Vector2(.5, .333), new THREE.Vector2(0, .333)];
+		var bottom = [new THREE.Vector2(.5, 0), new THREE.Vector2(1, 0), new THREE.Vector2(1, .333), new THREE.Vector2(.5, .333)];
+
+		goalieGeometry.faceVertexUvs[0] = [];
+		goalieGeometry.faceVertexUvs[0][0] = [ sides[0], sides[1], sides[3] ];  //sideL
+		goalieGeometry.faceVertexUvs[0][1] = [ sides[1], sides[2], sides[3] ];
+
+		goalieGeometry.faceVertexUvs[0][2] = [ sides[0], sides[1], sides[3] ];  //sideR
+		goalieGeometry.faceVertexUvs[0][3] = [ sides[1], sides[2], sides[3] ];
+
+		goalieGeometry.faceVertexUvs[0][4] = [ top[0], top[1], top[3] ];        //top
+		goalieGeometry.faceVertexUvs[0][5] = [ top[1], top[2], top[3] ];
+
+		goalieGeometry.faceVertexUvs[0][6] = [ bottom[0], bottom[1], bottom[3] ];//bottom
+		goalieGeometry.faceVertexUvs[0][7] = [ bottom[1], bottom[2], bottom[3] ];
+
+		goalieGeometry.faceVertexUvs[0][8] = [ front[0], front[1], front[3] ];  //front
+		goalieGeometry.faceVertexUvs[0][9] = [ front[1], front[2], front[3] ];
+
+		goalieGeometry.faceVertexUvs[0][10] = [ back[0], back[1], back[3] ];    //back
+		goalieGeometry.faceVertexUvs[0][11] = [ back[1], back[2], back[3] ];
+
+
+		goalie.position.set(0, 4, -35);
+		goalie.castShadow = true;
+		scene.add(goalie);
 
 
     /*** Controls ***/
@@ -402,7 +428,7 @@ document.addEventListener('keydown', function(event) {
     } else if (!goalieMoving) {
         switch (event.key) {
 
-            case "j":
+            case "l":
                 if (goalie.position.x < 10) {
                     goalie.setLinearVelocity(
                         goalieLV.add({ x: goalieSpeed, y: 0, z: 0 })
@@ -411,7 +437,7 @@ document.addEventListener('keydown', function(event) {
                 }
                 break;
 
-            case "l":
+            case "j":
             if (goalie.position.x > -10) {
                 goalie.setLinearVelocity(
                     goalieLV.add({ x: -goalieSpeed, y: 0, z: 0 })
